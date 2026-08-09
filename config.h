@@ -30,13 +30,13 @@
 // BOUTONS
 // ============================================================
 
-// Fond général des boutons
+// Fond général
 #define COLOR_BUTTON_BG             TFT_DARKGREY
 
-// Contour général des boutons
+// Contour général
 #define COLOR_BUTTON_BORDER         TFT_WHITE
 
-// Texte général des boutons
+// Texte
 #define COLOR_BUTTON_TEXT           TFT_WHITE
 
 // Boutons directionnels
@@ -58,7 +58,7 @@
 #define COLOR_BUTTON_CANCEL_BORDER  COLOR_ERROR
 #define COLOR_BUTTON_CANCEL_TEXT    TFT_WHITE
 
-// Compatibilité avec le code existant
+// Compatibilité ancien code
 #define COLOR_BUTTON               COLOR_BUTTON_BG
 #define COLOR_BUTTON_OK            COLOR_BUTTON_OK_BG
 #define COLOR_BUTTON_CANCEL        COLOR_BUTTON_CANCEL_BG
@@ -67,17 +67,22 @@
 // HEADER
 // ============================================================
 
+// Première ligne horizontale
 #define HEADER_LINE_1_Y      10
 
+// Barre de progression
 #define PROGRESS_Y           19
 #define PROGRESS_HEIGHT      1
 #define COLOR_PROGRESS       COLOR_PRIMARY
 
+// Deuxième ligne horizontale
 #define HEADER_LINE_2_Y      12
 
+// Heure
 #define HEADER_TIME_X        2
 #define HEADER_TIME_Y        0
 
+// Couleurs Header
 #define COLOR_HEADER_TIME    COLOR_TEXT
 #define COLOR_HEADER_STATUS  COLOR_LINE
 #define COLOR_HEADER_LINE    COLOR_LINE
@@ -101,25 +106,19 @@
 #define CONTENT_HEIGHT       218
 
 // ============================================================
-// PAGE ACCUEIL
+// PAGE MAIN
 // ============================================================
 
 #define HOME_TITLE                  "-3xØc3t- BO4RD"
 
-// Position générale des boutons
 #define HOME_BUTTON_X               20
 
-// Dimensions
 #define HOME_BUTTON_WIDTH           200
 #define HOME_BUTTON_HEIGHT          50
 
-// Position bouton METEO
 #define HOME_BUTTON_METEO_Y         80
-
-// Position bouton WIFI
 #define HOME_BUTTON_WIFI_Y          150
 
-// Couleurs boutons accueil
 #define HOME_BUTTON_BG              COLOR_BUTTON_BG
 #define HOME_BUTTON_BORDER          COLOR_BUTTON_BORDER
 #define HOME_BUTTON_TEXT            COLOR_BUTTON_TEXT
@@ -152,10 +151,9 @@
 #define COLOR_FOOTER_MENU_BORDER     COLOR_BUTTON_BORDER
 #define COLOR_FOOTER_MENU_TEXT       COLOR_BUTTON_TEXT
 
-// Compatibilité avec l'ancien nom
+// Compatibilité ancien code
 #define COLOR_FOOTER_MENU            COLOR_FOOTER_MENU_BG
 #define COLOR_FOOTER_MENU_LINE       COLOR_FOOTER_MENU_BORDER
-
 #define COLOR_FOOTER_INFO            COLOR_TEXT
 
 // ============================================================
@@ -178,7 +176,6 @@
 
 // ------------------------------------------------------------
 // Barre de progression Splash
-// Identique à celle du header
 // ------------------------------------------------------------
 
 #define SPLASH_PROGRESS_X        0

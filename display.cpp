@@ -1,5 +1,4 @@
 #include "display.h"
-
 #include <time.h>
 #include "config.h"
 
@@ -15,10 +14,10 @@ TFT_eSPI tft = TFT_eSPI();
 
 static uint16_t statusColors[4] =
 {
-    COLOR_HEADER_STATUS,
-    COLOR_HEADER_STATUS,
-    COLOR_HEADER_STATUS,
-    COLOR_HEADER_STATUS
+COLOR_HEADER_STATUS,
+COLOR_HEADER_STATUS,
+COLOR_HEADER_STATUS,
+COLOR_HEADER_STATUS
 };
 
 static uint8_t progressValue = 0;
@@ -28,12 +27,12 @@ static uint8_t progressValue = 0;
 // ============================================================
 
 static void drawArrow(
-    int centerX,
-    int centerY,
-    int w,
-    int h,
-    uint8_t direction,
-    uint16_t color
+int centerX,
+int centerY,
+int w,
+int h,
+uint8_t direction,
+uint16_t color
 );
 
 // ============================================================
@@ -42,23 +41,24 @@ static void drawArrow(
 
 void displayInit()
 {
-    tft.init();
+tft.init();
 
-    tft.setRotation(
-        TFT_ROTATION
-    );
+tft.setRotation(
+    TFT_ROTATION
+);
 
-    tft.fillScreen(
-        COLOR_BACKGROUND
-    );
+tft.fillScreen(
+    COLOR_BACKGROUND
+);
 
-    tft.setTextWrap(
-        false
-    );
+tft.setTextWrap(
+    false
+);
 
-    drawInterface(
-        "SYSTEME"
-    );
+drawInterface(
+    "SYSTEME"
+);
+
 }
 
 // ============================================================
@@ -66,22 +66,23 @@ void displayInit()
 // ============================================================
 
 void drawInterface(
-    const String& title
+const String& title
 )
 {
-    tft.fillScreen(
-        COLOR_BACKGROUND
-    );
+tft.fillScreen(
+COLOR_BACKGROUND
+);
 
-    drawHeader();
+drawHeader();
 
-    drawTitle(
-        title
-    );
+drawTitle(
+    title
+);
 
-    clearContent();
+clearContent();
 
-    drawFooter();
+drawFooter();
+
 }
 
 // ============================================================
@@ -90,25 +91,28 @@ void drawInterface(
 
 void drawHeader()
 {
-    drawHeaderTime();
+drawHeaderTime();
 
-    drawStatusSquares();
+drawStatusSquares();
 
-    drawProgressBar();
+drawProgressBar();
 
-    tft.drawFastHLine(
-        0,
-        HEADER_LINE_1_Y,
-        SCREEN_WIDTH,
-        COLOR_HEADER_LINE
-    );
+// Première ligne
+tft.drawFastHLine(
+    0,
+    HEADER_LINE_1_Y,
+    SCREEN_WIDTH,
+    COLOR_HEADER_LINE
+);
 
-    tft.drawFastHLine(
-        0,
-        HEADER_LINE_2_Y,
-        SCREEN_WIDTH,
-        COLOR_HEADER_LINE
-    );
+// Deuxième ligne
+tft.drawFastHLine(
+    0,
+    HEADER_LINE_2_Y,
+    SCREEN_WIDTH,
+    COLOR_HEADER_LINE
+);
+
 }
 
 // ============================================================
@@ -117,59 +121,60 @@ void drawHeader()
 
 void drawHeaderTime()
 {
-    time_t now =
-        time(nullptr);
+time_t now =
+time(nullptr);
 
-    struct tm* timeinfo =
-        localtime(&now);
+struct tm* timeinfo =
+    localtime(&now);
 
-    char buffer[32];
+char buffer[32];
 
-    if (timeinfo != nullptr)
-    {
-        snprintf(
-            buffer,
-            sizeof(buffer),
-            "%02d:%02d:%02d - %04d/%02d/%02d",
-            timeinfo->tm_hour,
-            timeinfo->tm_min,
-            timeinfo->tm_sec,
-            timeinfo->tm_year + 1900,
-            timeinfo->tm_mon + 1,
-            timeinfo->tm_mday
-        );
-    }
-    else
-    {
-        snprintf(
-            buffer,
-            sizeof(buffer),
-            "--:--:-- - ----/--/--"
-        );
-    }
-
-    tft.setTextFont(
-        1
+if (timeinfo != nullptr)
+{
+    snprintf(
+        buffer,
+        sizeof(buffer),
+        "%02d:%02d:%02d - %04d/%02d/%02d",
+        timeinfo->tm_hour,
+        timeinfo->tm_min,
+        timeinfo->tm_sec,
+        timeinfo->tm_year + 1900,
+        timeinfo->tm_mon + 1,
+        timeinfo->tm_mday
     );
-
-    tft.setTextSize(
-        1
+}
+else
+{
+    snprintf(
+        buffer,
+        sizeof(buffer),
+        "--:--:-- - ----/--/--"
     );
+}
 
-    tft.setTextDatum(
-        TL_DATUM
-    );
+tft.setTextFont(
+    1
+);
 
-    tft.setTextColor(
-        COLOR_HEADER_TIME,
-        COLOR_BACKGROUND
-    );
+tft.setTextSize(
+    1
+);
 
-    tft.drawString(
-        String(buffer),
-        HEADER_TIME_X,
-        HEADER_TIME_Y
-    );
+tft.setTextDatum(
+    TL_DATUM
+);
+
+tft.setTextColor(
+    COLOR_HEADER_TIME,
+    COLOR_BACKGROUND
+);
+
+tft.drawString(
+    String(buffer),
+    HEADER_TIME_X,
+    HEADER_TIME_Y
+);
+
 }
 
 // ============================================================
@@ -178,34 +183,35 @@ void drawHeaderTime()
 
 void drawStatusSquares()
 {
-    const int squareSize = 7;
-    const int spacing = 2;
+const int squareSize = 7;
+const int spacing = 2;
 
-    const int totalWidth =
-        (squareSize * 4) +
-        (spacing * 3);
+const int totalWidth =
+    (squareSize * 4) +
+    (spacing * 3);
 
-    const int startX =
-        SCREEN_WIDTH -
-        totalWidth -
-        2;
+const int startX =
+    SCREEN_WIDTH -
+    totalWidth -
+    2;
 
-    const int y = 0;
+const int y = 0;
 
-    for (int i = 0; i < 4; i++)
-    {
-        int x =
-            startX +
-            i * (squareSize + spacing);
+for (int i = 0; i < 4; i++)
+{
+    int x =
+        startX +
+        i * (squareSize + spacing);
 
-        tft.fillRect(
-            x,
-            y,
-            squareSize,
-            squareSize,
-            statusColors[i]
-        );
-    }
+    tft.fillRect(
+        x,
+        y,
+        squareSize,
+        squareSize,
+        statusColors[i]
+    );
+}
+
 }
 
 // ============================================================
@@ -214,33 +220,34 @@ void drawStatusSquares()
 
 void drawProgressBar()
 {
+tft.fillRect(
+0,
+PROGRESS_Y,
+SCREEN_WIDTH,
+PROGRESS_HEIGHT,
+COLOR_BACKGROUND
+);
+
+int width =
+    map(
+        progressValue,
+        0,
+        100,
+        0,
+        SCREEN_WIDTH
+    );
+
+if (width > 0)
+{
     tft.fillRect(
         0,
         PROGRESS_Y,
-        SCREEN_WIDTH,
+        width,
         PROGRESS_HEIGHT,
-        COLOR_BACKGROUND
+        COLOR_PROGRESS
     );
+}
 
-    int width =
-        map(
-            progressValue,
-            0,
-            100,
-            0,
-            SCREEN_WIDTH
-        );
-
-    if (width > 0)
-    {
-        tft.fillRect(
-            0,
-            PROGRESS_Y,
-            width,
-            PROGRESS_HEIGHT,
-            COLOR_PROGRESS
-        );
-    }
 }
 
 // ============================================================
@@ -248,18 +255,19 @@ void drawProgressBar()
 // ============================================================
 
 void setProgress(
-    uint8_t percent
+uint8_t percent
 )
 {
-    if (percent > 100)
-    {
-        percent = 100;
-    }
+if (percent > 100)
+{
+percent = 100;
+}
 
-    progressValue =
-        percent;
+progressValue =
+    percent;
 
-    drawProgressBar();
+drawProgressBar();
+
 }
 
 // ============================================================
@@ -267,46 +275,47 @@ void setProgress(
 // ============================================================
 
 void drawTitle(
-    const String& title
+const String& title
 )
 {
-    tft.fillRect(
-        0,
-        TITLE_Y,
-        SCREEN_WIDTH,
-        TITLE_HEIGHT,
-        COLOR_BACKGROUND
-    );
+tft.fillRect(
+0,
+TITLE_Y,
+SCREEN_WIDTH,
+TITLE_HEIGHT,
+COLOR_BACKGROUND
+);
 
-    tft.setTextFont(
-        2
-    );
+tft.setTextFont(
+    2
+);
 
-    tft.setTextSize(
-        1
-    );
+tft.setTextSize(
+    1
+);
 
-    tft.setTextDatum(
-        TC_DATUM
-    );
+tft.setTextDatum(
+    TC_DATUM
+);
 
-    tft.setTextColor(
-        COLOR_TITLE_TEXT,
-        COLOR_BACKGROUND
-    );
+tft.setTextColor(
+    COLOR_TITLE_TEXT,
+    COLOR_BACKGROUND
+);
 
-    tft.drawString(
-        title,
-        SCREEN_WIDTH / 2,
-        TITLE_Y + 1
-    );
+tft.drawString(
+    title,
+    SCREEN_WIDTH / 2,
+    TITLE_Y + 1
+);
 
-    tft.drawFastHLine(
-        0,
-        TITLE_LINE_Y,
-        SCREEN_WIDTH,
-        COLOR_TITLE_LINE
-    );
+tft.drawFastHLine(
+    0,
+    TITLE_LINE_Y,
+    SCREEN_WIDTH,
+    COLOR_TITLE_LINE
+);
+
 }
 
 // ============================================================
@@ -315,13 +324,13 @@ void drawTitle(
 
 void clearContent()
 {
-    tft.fillRect(
-        0,
-        CONTENT_Y,
-        SCREEN_WIDTH,
-        CONTENT_HEIGHT,
-        COLOR_BACKGROUND
-    );
+tft.fillRect(
+0,
+CONTENT_Y,
+SCREEN_WIDTH,
+CONTENT_HEIGHT,
+COLOR_BACKGROUND
+);
 }
 
 // ============================================================
@@ -330,95 +339,72 @@ void clearContent()
 
 void drawFooter()
 {
-    const int y =
-        FOOTER_Y;
+const int y =
+FOOTER_Y;
 
-    const int height =
-        FOOTER_HEIGHT;
+const int height =
+    FOOTER_HEIGHT;
 
-    // --------------------------------------------------------
-    // FOND FOOTER
-    // --------------------------------------------------------
+tft.fillRect(
+    0,
+    y,
+    SCREEN_WIDTH,
+    height,
+    COLOR_FOOTER_BG
+);
 
-    tft.fillRect(
-        0,
-        y,
-        SCREEN_WIDTH,
-        height,
-        COLOR_FOOTER_BG
-    );
+tft.drawFastHLine(
+    0,
+    y,
+    SCREEN_WIDTH,
+    COLOR_FOOTER_LINE
+);
 
-    // --------------------------------------------------------
-    // LIGNE SUPERIEURE
-    // --------------------------------------------------------
+const int buttonY =
+    y + 1;
 
-    tft.drawFastHLine(
-        0,
-        y,
-        SCREEN_WIDTH,
-        COLOR_FOOTER_LINE
-    );
+const int buttonHeight =
+    height - 1;
 
-    // --------------------------------------------------------
-    // BOUTON MENU
-    // --------------------------------------------------------
+const int iconSize =
+    FOOTER_MENU_ICON_SIZE;
 
-    const int buttonY =
-        y + 1;
+const int iconX =
+    (FOOTER_MENU_WIDTH - iconSize) / 2;
 
-    const int buttonHeight =
-        height - 1;
+const int iconY =
+    buttonY +
+    (buttonHeight - iconSize) / 2;
 
-    const int iconSize =
-        FOOTER_MENU_ICON_SIZE;
+tft.fillRoundRect(
+    iconX,
+    iconY,
+    iconSize,
+    iconSize,
+    FOOTER_MENU_ICON_RADIUS,
+    COLOR_FOOTER_MENU_BG
+);
 
-    const int iconX =
-        (FOOTER_MENU_WIDTH - iconSize) / 2;
+tft.drawRoundRect(
+    iconX,
+    iconY,
+    iconSize,
+    iconSize,
+    FOOTER_MENU_ICON_RADIUS,
+    COLOR_FOOTER_MENU_BORDER
+);
 
-    const int iconY =
-        buttonY +
-        (buttonHeight - iconSize) / 2;
+tft.drawFastVLine(
+    FOOTER_MENU_WIDTH,
+    y + 1,
+    height - 1,
+    COLOR_FOOTER_LINE
+);
 
-    // Fond du bouton MENU
+drawFooterInfo(
+    ""
+);
 
-    tft.fillRoundRect(
-        iconX,
-        iconY,
-        iconSize,
-        iconSize,
-        FOOTER_MENU_ICON_RADIUS,
-        COLOR_FOOTER_MENU_BG
-    );
-
-    // Contour du bouton MENU
-
-    tft.drawRoundRect(
-        iconX,
-        iconY,
-        iconSize,
-        iconSize,
-        FOOTER_MENU_ICON_RADIUS,
-        COLOR_FOOTER_MENU_BORDER
-    );
-
-    // --------------------------------------------------------
-    // SEPARATION MENU / INFORMATIONS
-    // --------------------------------------------------------
-
-    tft.drawFastVLine(
-        FOOTER_MENU_WIDTH,
-        y + 1,
-        height - 1,
-        COLOR_FOOTER_LINE
-    );
-
-    // --------------------------------------------------------
-    // ZONE INFORMATIONS
-    // --------------------------------------------------------
-
-    drawFooterInfo(
-        ""
-    );
 }
 
 // ============================================================
@@ -426,70 +412,59 @@ void drawFooter()
 // ============================================================
 
 void drawFooterInfo(
-    const String& text
+const String& text
 )
 {
-    const int x =
-        FOOTER_MENU_WIDTH + 2;
+const int x =
+FOOTER_MENU_WIDTH + 2;
 
-    const int y =
-        FOOTER_Y + 1;
+const int y =
+    FOOTER_Y + 1;
 
-    const int width =
-        SCREEN_WIDTH -
-        FOOTER_MENU_WIDTH -
-        2;
+const int width =
+    SCREEN_WIDTH -
+    FOOTER_MENU_WIDTH -
+    2;
 
-    const int height =
-        FOOTER_HEIGHT - 2;
+const int height =
+    FOOTER_HEIGHT - 2;
 
-    // --------------------------------------------------------
-    // NETTOYAGE
-    // --------------------------------------------------------
+tft.fillRect(
+    x,
+    y,
+    width,
+    height,
+    COLOR_FOOTER_BG
+);
 
-    tft.fillRect(
-        x,
-        y,
-        width,
-        height,
-        COLOR_FOOTER_BG
-    );
+if (text.length() == 0)
+{
+    return;
+}
 
-    // --------------------------------------------------------
-    // PAS DE TEXTE
-    // --------------------------------------------------------
+tft.setTextFont(
+    1
+);
 
-    if (text.length() == 0)
-    {
-        return;
-    }
+tft.setTextSize(
+    1
+);
 
-    // --------------------------------------------------------
-    // TEXTE
-    // --------------------------------------------------------
+tft.setTextDatum(
+    ML_DATUM
+);
 
-    tft.setTextFont(
-        1
-    );
+tft.setTextColor(
+    COLOR_FOOTER_INFO,
+    COLOR_FOOTER_BG
+);
 
-    tft.setTextSize(
-        1
-    );
+tft.drawString(
+    text,
+    x + 3,
+    y + height / 2
+);
 
-    tft.setTextDatum(
-        ML_DATUM
-    );
-
-    tft.setTextColor(
-        COLOR_FOOTER_INFO,
-        COLOR_FOOTER_BG
-    );
-
-    tft.drawString(
-        text,
-        x + 3,
-        y + height / 2
-    );
 }
 
 // ============================================================
@@ -497,140 +472,122 @@ void drawFooterInfo(
 // ============================================================
 
 static void drawArrow(
-    int centerX,
-    int centerY,
-    int w,
-    int h,
-    uint8_t direction,
-    uint16_t color
+int centerX,
+int centerY,
+int w,
+int h,
+uint8_t direction,
+uint16_t color
 )
 {
-    int left =
-        centerX -
-        w / 2;
+int left =
+centerX -
+w / 2;
 
-    int top =
-        centerY -
-        h / 2;
+int top =
+    centerY -
+    h / 2;
 
-    int right =
-        centerX +
-        w / 2;
+int right =
+    centerX +
+    w / 2;
 
-    int bottom =
-        centerY +
-        h / 2;
+int bottom =
+    centerY +
+    h / 2;
 
-    tft.drawRect(
-        left,
-        top,
-        w,
-        h,
-        COLOR_FOOTER_LINE
+tft.drawRect(
+    left,
+    top,
+    w,
+    h,
+    COLOR_FOOTER_LINE
+);
+
+const int shaft = 3;
+const int head = 5;
+
+if (direction == 0)
+{
+    tft.fillRect(
+        centerX - shaft / 2,
+        centerY - 1,
+        shaft,
+        7,
+        color
     );
 
-    const int shaft = 3;
-    const int head = 5;
+    tft.fillTriangle(
+        centerX,
+        top + 3,
+        centerX - head,
+        top + 9,
+        centerX + head,
+        top + 9,
+        color
+    );
+}
+else if (direction == 1)
+{
+    tft.fillRect(
+        centerX - shaft / 2,
+        centerY - 6,
+        shaft,
+        7,
+        color
+    );
 
-    // --------------------------------------------------------
-    // HAUT
-    // --------------------------------------------------------
+    tft.fillTriangle(
+        centerX,
+        bottom - 3,
+        centerX - head,
+        bottom - 9,
+        centerX + head,
+        bottom - 9,
+        color
+    );
+}
+else if (direction == 2)
+{
+    tft.fillRect(
+        centerX - 1,
+        centerY - shaft / 2,
+        7,
+        shaft,
+        color
+    );
 
-    if (direction == 0)
-    {
-        tft.fillRect(
-            centerX - shaft / 2,
-            centerY - 1,
-            shaft,
-            7,
-            color
-        );
+    tft.fillTriangle(
+        left + 3,
+        centerY,
+        left + 9,
+        centerY - head,
+        left + 9,
+        centerY + head,
+        color
+    );
+}
+else
+{
+    tft.fillRect(
+        centerX - 6,
+        centerY - shaft / 2,
+        7,
+        shaft,
+        color
+    );
 
-        tft.fillTriangle(
-            centerX,
-            top + 3,
-            centerX - head,
-            top + 9,
-            centerX + head,
-            top + 9,
-            color
-        );
-    }
+    tft.fillTriangle(
+        right - 3,
+        centerY,
+        right - 9,
+        centerY - head,
+        right - 9,
+        centerY + head,
+        color
+    );
+}
 
-    // --------------------------------------------------------
-    // BAS
-    // --------------------------------------------------------
-
-    else if (direction == 1)
-    {
-        tft.fillRect(
-            centerX - shaft / 2,
-            centerY - 6,
-            shaft,
-            7,
-            color
-        );
-
-        tft.fillTriangle(
-            centerX,
-            bottom - 3,
-            centerX - head,
-            bottom - 9,
-            centerX + head,
-            bottom - 9,
-            color
-        );
-    }
-
-    // --------------------------------------------------------
-    // GAUCHE
-    // --------------------------------------------------------
-
-    else if (direction == 2)
-    {
-        tft.fillRect(
-            centerX - 1,
-            centerY - shaft / 2,
-            7,
-            shaft,
-            color
-        );
-
-        tft.fillTriangle(
-            left + 3,
-            centerY,
-            left + 9,
-            centerY - head,
-            left + 9,
-            centerY + head,
-            color
-        );
-    }
-
-    // --------------------------------------------------------
-    // DROITE
-    // --------------------------------------------------------
-
-    else
-    {
-        tft.fillRect(
-            centerX - 6,
-            centerY - shaft / 2,
-            7,
-            shaft,
-            color
-        );
-
-        tft.fillTriangle(
-            right - 3,
-            centerY,
-            right - 9,
-            centerY - head,
-            right - 9,
-            centerY + head,
-            color
-        );
-    }
 }
 
 // ============================================================
@@ -638,98 +595,87 @@ static void drawArrow(
 // ============================================================
 
 void drawButton(
-    int x,
-    int y,
-    int w,
-    int h,
-    const String& label,
-    uint16_t color
+int x,
+int y,
+int w,
+int h,
+const String& label,
+uint16_t color
 )
 {
-    if (w < 3 || h < 3)
-    {
-        return;
-    }
+if (w < 3 || h < 3)
+{
+return;
+}
 
-    // --------------------------------------------------------
-    // BORDURE
-    // --------------------------------------------------------
+uint16_t borderColor =
+    COLOR_BUTTON_BORDER;
 
-    uint16_t borderColor =
-        COLOR_BUTTON_BORDER;
+if (color == COLOR_BUTTON_OK_BG)
+{
+    borderColor =
+        COLOR_BUTTON_OK_BORDER;
+}
+else if (color == COLOR_BUTTON_CANCEL_BG)
+{
+    borderColor =
+        COLOR_BUTTON_CANCEL_BORDER;
+}
 
-    if (color == COLOR_BUTTON_OK_BG)
-    {
-        borderColor =
-            COLOR_BUTTON_OK_BORDER;
-    }
-    else if (color == COLOR_BUTTON_CANCEL_BG)
-    {
-        borderColor =
-            COLOR_BUTTON_CANCEL_BORDER;
-    }
+tft.drawRect(
+    x,
+    y,
+    w,
+    h,
+    borderColor
+);
 
-    tft.drawRect(
-        x,
-        y,
-        w,
-        h,
-        borderColor
-    );
+tft.fillRect(
+    x + 1,
+    y + 1,
+    w - 2,
+    h - 2,
+    color
+);
 
-    // --------------------------------------------------------
-    // FOND
-    // --------------------------------------------------------
+tft.setTextFont(
+    1
+);
 
-    tft.fillRect(
-        x + 1,
-        y + 1,
-        w - 2,
-        h - 2,
-        color
-    );
+tft.setTextSize(
+    1
+);
 
-    // --------------------------------------------------------
-    // TEXTE
-    // --------------------------------------------------------
+tft.setTextDatum(
+    MC_DATUM
+);
 
-    tft.setTextFont(
-        1
-    );
+uint16_t textColor =
+    COLOR_BUTTON_TEXT;
 
-    tft.setTextSize(
-        1
-    );
+if (color == COLOR_BUTTON_OK_BG)
+{
+    textColor =
+        COLOR_BUTTON_OK_TEXT;
+}
 
-    tft.setTextDatum(
-        MC_DATUM
-    );
+if (color == COLOR_BUTTON_CANCEL_BG)
+{
+    textColor =
+        COLOR_BUTTON_CANCEL_TEXT;
+}
 
-    uint16_t textColor =
-        COLOR_BUTTON_TEXT;
+tft.setTextColor(
+    textColor,
+    color
+);
 
-    if (color == COLOR_BUTTON_OK_BG)
-    {
-        textColor =
-            TFT_BLACK;
-    }
+tft.drawString(
+    label,
+    x + w / 2,
+    y + h / 2
+);
 
-    if (color == COLOR_BUTTON_CANCEL_BG)
-    {
-        textColor =
-            TFT_WHITE;
-    }
-
-    tft.setTextColor(
-        textColor,
-        color
-    );
-
-    tft.drawString(
-        label,
-        x + w / 2,
-        y + h / 2
-    );
 }
 
 // ============================================================
@@ -737,34 +683,35 @@ void drawButton(
 // ============================================================
 
 void centerText(
-    const String& text,
-    int y,
-    uint8_t size,
-    uint16_t color
+const String& text,
+int y,
+uint8_t size,
+uint16_t color
 )
 {
-    tft.setTextFont(
-        1
-    );
+tft.setTextFont(
+1
+);
 
-    tft.setTextSize(
-        size
-    );
+tft.setTextSize(
+    size
+);
 
-    tft.setTextDatum(
-        TC_DATUM
-    );
+tft.setTextDatum(
+    TC_DATUM
+);
 
-    tft.setTextColor(
-        color,
-        COLOR_BACKGROUND
-    );
+tft.setTextColor(
+    color,
+    COLOR_BACKGROUND
+);
 
-    tft.drawString(
-        text,
-        SCREEN_WIDTH / 2,
-        y
-    );
+tft.drawString(
+    text,
+    SCREEN_WIDTH / 2,
+    y
+);
+
 }
 
 // ============================================================
@@ -772,17 +719,18 @@ void centerText(
 // ============================================================
 
 void setStatus(
-    int index,
-    uint16_t color
+int index,
+uint16_t color
 )
 {
-    if (index < 0 || index > 3)
-    {
-        return;
-    }
+if (index < 0 || index > 3)
+{
+return;
+}
 
-    statusColors[index] =
-        color;
+statusColors[index] =
+    color;
 
-    drawStatusSquares();
+drawStatusSquares();
+
 }
