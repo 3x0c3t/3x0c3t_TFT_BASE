@@ -4,10 +4,17 @@
 #include "display.h"
 #include "splash.h"
 #include "pages.h"
-#include "settings.h"
+
+#include "pMain.h"
+#include "pMeteo.h"
+#include "pSettings.h"
+#include "pSystem.h"
+#include "pWifi.h"
+
 #include "clock.h"
 #include "wifi.h"
 #include "weather.h"
+
 
 // ============================================================
 // SETUP
@@ -24,37 +31,44 @@ void setup()
     Serial.println("================================");
 
     // --------------------------------------------------------
-    // Initialisation affichage
+    // AFFICHAGE
     // --------------------------------------------------------
 
     displayInit();
 
     // --------------------------------------------------------
-    // Splash
+    // SPLASH
     // --------------------------------------------------------
 
     splashShow();
 
     // --------------------------------------------------------
-    // Initialisation pages
+    // INITIALISATION DES PAGES
     // --------------------------------------------------------
 
     pagesInit();
 
+    pMainInit();
+    pMeteoInit();
+    pSettingsInit();
+    pSystemInit();
+    pWifiInit();
+
     // --------------------------------------------------------
-    // Initialisation réglages
+    // SERVICES
     // --------------------------------------------------------
 
-    settingsInit();
+    wifiInit();
 
     // --------------------------------------------------------
-    // Affichage MAIN
+    // AFFICHAGE MAIN
     // --------------------------------------------------------
 
     pagesShow(PAGE_MAIN);
 
     Serial.println("[BOOT] MAIN actif");
 }
+
 
 // ============================================================
 // LOOP
@@ -63,6 +77,8 @@ void setup()
 void loop()
 {
     drawHeaderTime();
+
+    pagesUpdate();
 
     delay(1000);
 }

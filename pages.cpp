@@ -1,13 +1,21 @@
 #include "pages.h"
+
 #include "display.h"
-#include "settings.h"
 #include "config.h"
+
+#include "pMain.h"
+#include "pMeteo.h"
+#include "pSettings.h"
+#include "pSystem.h"
+#include "pWifi.h"
+
 
 // ============================================================
 // PAGE COURANTE
 // ============================================================
 
 static PageID currentPage = PAGE_MAIN;
+
 
 // ============================================================
 // INITIALISATION
@@ -18,11 +26,22 @@ void pagesInit()
     currentPage = PAGE_MAIN;
 }
 
+
 // ============================================================
-// NOM DE PAGE
+// PAGE COURANTE
 // ============================================================
 
-static const char* pageName(PageID page)
+PageID pagesCurrent()
+{
+    return currentPage;
+}
+
+
+// ============================================================
+// NOM PAGE
+// ============================================================
+
+const char* pageName(PageID page)
 {
     switch (page)
     {
@@ -33,15 +52,19 @@ static const char* pageName(PageID page)
             return "METEO";
 
         case PAGE_SETTINGS:
-            return "REGLAGES";
+            return "SETTINGS";
 
         case PAGE_SYSTEM:
-            return "SYSTEME";
+            return "SYSTEM";
+
+        case PAGE_WIFI:
+            return "WIFI";
 
         default:
-            return "";
+            return "UNKNOWN";
     }
 }
+
 
 // ============================================================
 // AFFICHAGE PAGE
@@ -56,125 +79,69 @@ void pagesShow(PageID page)
 
     currentPage = page;
 
-    // ========================================================
-    // INTERFACE FIXE
-    // ========================================================
-
-    drawHeader();
-
-    clearContent();
-
-    drawTitle(
-        pageName(currentPage)
-    );
-
-    drawFooter();
-
-    // ========================================================
-    // MAIN
-    // ========================================================
-
-    if (page == PAGE_MAIN)
+    switch (currentPage)
     {
-        drawTitle(
-            "-3x0c3t- B04RD"
-        );
+        case PAGE_MAIN:
+            pMainShow();
+            break;
 
-        // ----------------------------------------------------
-        // METEO
-        // ----------------------------------------------------
+        case PAGE_METEO:
+            pMeteoShow();
+            break;
 
-        drawButton(
-            20,
-            75,
-            200,
-            50,
-            "METEO",
-            COLOR_BUTTON_BG
-        );
+        case PAGE_SETTINGS:
+            pSettingsShow();
+            break;
 
-        // ----------------------------------------------------
-        // WIFI
-        // ----------------------------------------------------
+        case PAGE_SYSTEM:
+            pSystemShow();
+            break;
 
-        drawButton(
-            20,
-            140,
-            200,
-            50,
-            "WiFi",
-            COLOR_BUTTON_BG
-        );
+        case PAGE_WIFI:
+            pWifiShow();
+            break;
 
-        return;
-    }
-
-    // ========================================================
-    // METEO
-    // ========================================================
-
-    if (page == PAGE_METEO)
-    {
-        drawTitle(
-            "METEO"
-        );
-
-        tft.setTextFont(2);
-        tft.setTextSize(1);
-        tft.setTextDatum(MC_DATUM);
-
-        tft.setTextColor(
-            COLOR_TEXT,
-            COLOR_BACKGROUND
-        );
-
-        tft.drawString(
-            "METEO",
-            SCREEN_WIDTH / 2,
-            CONTENT_Y + 50
-        );
-
-        return;
-    }
-
-    // ========================================================
-    // SETTINGS
-    // ========================================================
-
-    if (page == PAGE_SETTINGS)
-    {
-        settingsShow();
-        return;
-    }
-
-    // ========================================================
-    // SYSTEME
-    // ========================================================
-
-    if (page == PAGE_SYSTEM)
-    {
-        drawTitle(
-            "SYSTEME"
-        );
-
-        tft.setTextFont(2);
-        tft.setTextSize(1);
-        tft.setTextDatum(MC_DATUM);
-
-        tft.setTextColor(
-            COLOR_TEXT,
-            COLOR_BACKGROUND
-        );
-
-        tft.drawString(
-            "SYSTEME",
-            SCREEN_WIDTH / 2,
-            CONTENT_Y + 50
-        );
-
-        return;
+        default:
+            pMainShow();
+            currentPage = PAGE_MAIN;
+            break;
     }
 }
+
+
+// ============================================================
+// UPDATE
+// ============================================================
+
+void pagesUpdate()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainUpdate();
+            break;
+
+        case PAGE_METEO:
+            pMeteoUpdate();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsUpdate();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemUpdate();
+            break;
+
+        case PAGE_WIFI:
+            pWifiUpdate();
+            break;
+
+        default:
+            break;
+    }
+}
+
 
 // ============================================================
 // PAGE SUIVANTE
@@ -189,10 +156,9 @@ void pagesNext()
         next = PAGE_MAIN;
     }
 
-    pagesShow(
-        (PageID)next
-    );
+    pagesShow((PageID)next);
 }
+
 
 // ============================================================
 // PAGE PRECEDENTE
@@ -207,71 +173,260 @@ void pagesPrevious()
         previous = PAGE_COUNT - 1;
     }
 
-    pagesShow(
-        (PageID)previous
-    );
+    pagesShow((PageID)previous);
 }
 
+
 // ============================================================
-// PAGE COURANTE
+// MAIN
 // ============================================================
 
-PageID pagesCurrent()
+void pagesMain()
 {
-    return currentPage;
+    pagesShow(PAGE_MAIN);
 }
 
+
 // ============================================================
-// RETOUR MAIN
+// METEO
 // ============================================================
 
-void pagesHome()
+void pagesMeteo()
 {
-    pagesShow(
-        PAGE_MAIN
-    );
+    pagesShow(PAGE_METEO);
 }
 
+
 // ============================================================
-// OUVRIR SETTINGS
+// SETTINGS
 // ============================================================
 
 void pagesSettings()
 {
-    pagesShow(
-        PAGE_SETTINGS
-    );
+    pagesShow(PAGE_SETTINGS);
 }
 
+
 // ============================================================
-// BOUTON MENU
+// SYSTEM
 // ============================================================
 
-void pagesMenu()
+void pagesSystem()
 {
-    pagesShow(
-        PAGE_SETTINGS
-    );
+    pagesShow(PAGE_SYSTEM);
 }
 
+
 // ============================================================
-// BOUTON METEO
+// WIFI
 // ============================================================
 
-void pagesButtonMeteo()
+void pagesWifi()
 {
-    pagesShow(
-        PAGE_METEO
-    );
+    pagesShow(PAGE_WIFI);
 }
 
+
 // ============================================================
-// BOUTON WIFI
+// BOUTON UP
 // ============================================================
 
-void pagesButtonWifi()
+void pagesButtonUp()
 {
-    pagesShow(
-        PAGE_MAIN
-    );
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonUp();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonUp();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonUp();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonUp();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonUp();
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ============================================================
+// BOUTON DOWN
+// ============================================================
+
+void pagesButtonDown()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonDown();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonDown();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonDown();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonDown();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonDown();
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ============================================================
+// BOUTON LEFT
+// ============================================================
+
+void pagesButtonLeft()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonLeft();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonLeft();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonLeft();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonLeft();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonLeft();
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ============================================================
+// BOUTON RIGHT
+// ============================================================
+
+void pagesButtonRight()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonRight();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonRight();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonRight();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonRight();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonRight();
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ============================================================
+// BOUTON OK
+// ============================================================
+
+void pagesButtonOk()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonOk();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonOk();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonOk();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonOk();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonOk();
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ============================================================
+// BOUTON CANCEL
+// ============================================================
+
+void pagesButtonCancel()
+{
+    switch (currentPage)
+    {
+        case PAGE_MAIN:
+            pMainButtonCancel();
+            break;
+
+        case PAGE_METEO:
+            pMeteoButtonCancel();
+            break;
+
+        case PAGE_SETTINGS:
+            pSettingsButtonCancel();
+            break;
+
+        case PAGE_SYSTEM:
+            pSystemButtonCancel();
+            break;
+
+        case PAGE_WIFI:
+            pWifiButtonCancel();
+            break;
+
+        default:
+            pagesMain();
+            break;
+    }
 }

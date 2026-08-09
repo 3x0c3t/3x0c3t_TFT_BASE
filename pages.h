@@ -3,8 +3,9 @@
 
 #include <Arduino.h>
 
+
 // ============================================================
-// PAGES
+// IDENTIFIANTS DES PAGES
 // ============================================================
 
 enum PageID
@@ -13,8 +14,11 @@ enum PageID
     PAGE_METEO,
     PAGE_SETTINGS,
     PAGE_SYSTEM,
+    PAGE_WIFI,
+
     PAGE_COUNT
 };
+
 
 // ============================================================
 // INITIALISATION
@@ -22,17 +26,27 @@ enum PageID
 
 void pagesInit();
 
+
 // ============================================================
 // AFFICHAGE
 // ============================================================
 
 void pagesShow(PageID page);
 
+
 // ============================================================
-// PAGE COURANTE
+// UPDATE
 // ============================================================
 
-PageID pagesGetCurrent();
+void pagesUpdate();
+
+
+// ============================================================
+// ETAT
+// ============================================================
+
+PageID pagesCurrent();
+
 
 // ============================================================
 // NAVIGATION
@@ -41,10 +55,12 @@ PageID pagesGetCurrent();
 void pagesNext();
 void pagesPrevious();
 
-void pagesGoMain();
-void pagesGoMeteo();
-void pagesGoSettings();
-void pagesGoSystem();
+void pagesMain();
+void pagesMeteo();
+void pagesSettings();
+void pagesSystem();
+void pagesWifi();
+
 
 // ============================================================
 // BOUTONS
@@ -54,8 +70,14 @@ void pagesButtonUp();
 void pagesButtonDown();
 void pagesButtonLeft();
 void pagesButtonRight();
-void pagesButtonMenu();
 void pagesButtonOk();
 void pagesButtonCancel();
+
+
+// ============================================================
+// NOM DE PAGE
+// ============================================================
+
+const char* pageName(PageID page);
 
 #endif
