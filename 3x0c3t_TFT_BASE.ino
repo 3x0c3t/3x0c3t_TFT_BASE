@@ -2,156 +2,10 @@
 #include <TFT_eSPI.h>
 #include <time.h>
 
-#include <ESP8266WiFi.h>
-
 #include "config.h"
 #include "display.h"
 #include "weather.h"
-
-// ============================================================
-// WIFI
-// ============================================================
-
-static bool wifiEnabled = false;
-
-// ============================================================
-// INITIALISATION WIFI
-// ============================================================
-
-void wifiInit()
-{
-    Serial.println();
-    Serial.println(
-        "[WIFI] Initialisation"
-    );
-
-    // --------------------------------------------------------
-    // Aucun SSID configuré
-    // --------------------------------------------------------
-
-    if (
-        strlen(WIFI_SSID) == 0
-    )
-    {
-        Serial.println(
-            "[WIFI] Aucun SSID configure"
-        );
-
-        wifiEnabled =
-            false;
-
-        addStatus(
-            "W",
-            COLOR_ERROR
-        );
-
-        return;
-    }
-
-    wifiEnabled =
-        true;
-
-    addStatus(
-        "W",
-        COLOR_WARNING
-    );
-
-    WiFi.mode(
-        WIFI_STA
-    );
-
-    WiFi.begin(
-        WIFI_SSID,
-        WIFI_PASSWORD
-    );
-
-    Serial.print(
-        "[WIFI] Connexion"
-    );
-
-    unsigned long start =
-        millis();
-
-    while (
-        WiFi.status() != WL_CONNECTED &&
-        millis() - start < 15000
-    )
-    {
-        delay(250);
-
-        Serial.print(
-            "."
-        );
-    }
-
-    Serial.println();
-
-    // --------------------------------------------------------
-    // Connexion réussie
-    // --------------------------------------------------------
-
-    if (
-        WiFi.status() == WL_CONNECTED
-    )
-    {
-        Serial.println(
-            "[WIFI] CONNECTE"
-        );
-
-        Serial.print(
-            "[WIFI] IP : "
-        );
-
-        Serial.println(
-            WiFi.localIP()
-        );
-
-        setStatus(
-            "W",
-            COLOR_OK
-        );
-    }
-    else
-    {
-        Serial.println(
-            "[WIFI] NON CONNECTE"
-        );
-
-        setStatus(
-            "W",
-            COLOR_ERROR
-        );
-    }
-}
-
-// ============================================================
-// MISE A JOUR WIFI
-// ============================================================
-
-void wifiUpdate()
-{
-    if (!wifiEnabled)
-    {
-        return;
-    }
-
-    if (
-        WiFi.status() == WL_CONNECTED
-    )
-    {
-        setStatus(
-            "W",
-            COLOR_OK
-        );
-    }
-    else
-    {
-        setStatus(
-            "W",
-            COLOR_ERROR
-        );
-    }
-}
+#include "wifi.h"
 
 // ============================================================
 // SETUP
@@ -181,77 +35,55 @@ void setup()
     );
 
     // --------------------------------------------------------
-    // TFT
+    // ECRAN
     // --------------------------------------------------------
 
     displayInit();
 
     // --------------------------------------------------------
-    // WiFi
+    // STATUTS
+    // --------------------------------------------------------
+
+    clearStatus();
+
+    // --------------------------------------------------------
+    // PROGRESSION
+    // --------------------------------------------------------
+
+    setProgress(
+        10
+    );
+
+    // --------------------------------------------------------
+    // WIFI
     // --------------------------------------------------------
 
     wifiInit();
-
-    // --------------------------------------------------------
-    // Meteo
-    // --------------------------------------------------------
-
-    weatherInit();
-
-    // --------------------------------------------------------
-    // Progression de démarrage
-    // --------------------------------------------------------
-
-    setProgress(
-        0
-    );
-
-    delay(
-        250
-    );
-
-    setProgress(
-        25
-    );
-
-    delay(
-        250
-    );
 
     setProgress(
         50
     );
 
-    delay(
-        250
-    );
+    // --------------------------------------------------------
+    // METEO
+    // --------------------------------------------------------
 
-    setProgress(
-        75
-    );
-
-    delay(
-        250
-    );
+    weatherInit();
 
     setProgress(
         100
     );
 
     delay(
-        500
+        300
     );
-
-    // --------------------------------------------------------
-    // Interface
-    // --------------------------------------------------------
 
     drawInterface(
         "SYSTEME"
     );
 
     Serial.println(
-        "Interface TFT initialisee."
+        "[BOOT] Initialisation terminee"
     );
 }
 
@@ -263,45 +95,40 @@ void loop()
 {
     static unsigned long lastDisplayUpdate = 0;
     static unsigned long lastWeatherUpdate = 0;
-    static unsigned long lastWifiUpdate = 0;
 
     unsigned long now =
         millis();
 
     // --------------------------------------------------------
-    // Heure
+    // WIFI
+    // --------------------------------------------------------
+
+    wifiUpdate();
+
+    // --------------------------------------------------------
+    // HEADER
     // --------------------------------------------------------
 
     if (
-        now - lastDisplayUpdate >= 1000
+        now - lastDisplayUpdate >=
+        1000
     )
     {
         lastDisplayUpdate =
             now;
 
         drawHeaderTime();
+
+        drawStatusSquares();
     }
 
     // --------------------------------------------------------
-    // WiFi
+    // METEO
     // --------------------------------------------------------
 
     if (
-        now - lastWifiUpdate >= 2000
-    )
-    {
-        lastWifiUpdate =
-            now;
-
-        wifiUpdate();
-    }
-
-    // --------------------------------------------------------
-    // Meteo
-    // --------------------------------------------------------
-
-    if (
-        now - lastWeatherUpdate >= 10000
+        now - lastWeatherUpdate >=
+        10000
     )
     {
         lastWeatherUpdate =
@@ -317,4 +144,8 @@ void loop()
             );
         }
     }
+
+    delay(
+        10
+    );
 }

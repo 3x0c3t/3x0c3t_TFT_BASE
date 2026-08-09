@@ -5,10 +5,6 @@
 #include <TFT_eSPI.h>
 #include "config.h"
 
-// ============================================================
-// TFT
-// ============================================================
-
 extern TFT_eSPI tft;
 
 // ============================================================
@@ -21,22 +17,37 @@ void displayInit();
 // INTERFACE
 // ============================================================
 
-void drawInterface(const String& title);
+void drawInterface(
+    const String& title
+);
 
 // ============================================================
 // HEADER
 // ============================================================
 
 void drawHeader();
+
 void drawHeaderTime();
+
 void drawStatusSquares();
+
 void drawProgressBar();
+
+// ============================================================
+// PROGRESSION
+// ============================================================
+
+void setProgress(
+    uint8_t percent
+);
 
 // ============================================================
 // TITRE
 // ============================================================
 
-void drawTitle(const String& title);
+void drawTitle(
+    const String& title
+);
 
 // ============================================================
 // CONTENU
@@ -50,17 +61,13 @@ void clearContent();
 
 void drawFooter();
 
-// ============================================================
-// BOUTONS
-// ============================================================
-
 void drawButton(
-int x,
-int y,
-int w,
-int h,
-const String& label,
-uint16_t color
+    int x,
+    int y,
+    int w,
+    int h,
+    const String& label,
+    uint16_t color
 );
 
 // ============================================================
@@ -68,41 +75,42 @@ uint16_t color
 // ============================================================
 
 void centerText(
-const String& text,
-int y,
-uint8_t size,
-uint16_t color
+    const String& text,
+    int y,
+    uint8_t size,
+    uint16_t color
 );
 
 // ============================================================
-// PROGRESSION
+// GESTION DES STATUTS
 // ============================================================
 
-void setProgress(uint8_t percent);
+// Ajoute un nouveau statut dans le header.
+// Exemple : addStatus("W", COLOR_ERROR);
 
-// ============================================================
-// SYSTEME DE STATUS
-//
-// Les indicateurs sont dynamiques.
-//
-// Exemple :
-// addStatus("W", COLOR_OK);
-// addStatus("S", COLOR_ERROR);
-//
-// setStatus("W", COLOR_OK);
-// setStatus("W", COLOR_ERROR);
-// ============================================================
+bool addStatus(
+    const String& label,
+    uint16_t color
+);
+
+// Modifie la couleur d'un statut existant.
+// Exemple : setStatus("W", COLOR_OK);
+
+bool setStatus(
+    const String& label,
+    uint16_t color
+);
+
+// Supprime tous les statuts.
 
 void clearStatus();
 
-void addStatus(
-const String& label,
-uint16_t color
-);
+// Compatibilité avec l'ancienne API.
+// Exemple : setStatus(0, COLOR_OK);
 
 void setStatus(
-const String& label,
-uint16_t color
+    int index,
+    uint16_t color
 );
 
 #endif

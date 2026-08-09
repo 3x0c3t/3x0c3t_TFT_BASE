@@ -8,21 +8,19 @@
 TFT_eSPI tft = TFT_eSPI();
 
 // ============================================================
-// STATUS
+// STATUTS
 // ============================================================
+
+#define MAX_STATUS 4
 
 struct StatusItem
 {
-String label;
-uint16_t color;
-bool active;
+    bool active;
+    String label;
+    uint16_t color;
 };
 
-static const uint8_t MAX_STATUS = 8;
-
 static StatusItem statusItems[MAX_STATUS];
-
-static uint8_t statusCount = 0;
 
 // ============================================================
 // PROGRESSION
@@ -35,12 +33,12 @@ static uint8_t progressValue = 0;
 // ============================================================
 
 static void drawArrow(
-int centerX,
-int centerY,
-int w,
-int h,
-uint8_t direction,
-uint16_t color
+    int centerX,
+    int centerY,
+    int w,
+    int h,
+    uint8_t direction,
+    uint16_t color
 );
 
 // ============================================================
@@ -49,19 +47,25 @@ uint16_t color
 
 void displayInit()
 {
-tft.init();
+    tft.init();
 
-tft.setRotation(TFT_ROTATION);
+    tft.setRotation(
+        TFT_ROTATION
+    );
 
-tft.fillScreen(
-    COLOR_BACKGROUND
-);
+    tft.fillScreen(
+        COLOR_BACKGROUND
+    );
 
-tft.setTextWrap(false);
+    tft.setTextWrap(
+        false
+    );
 
-drawInterface("SYSTEME");
+    clearStatus();
 
-
+    drawInterface(
+        "SYSTEME"
+    );
 }
 
 // ============================================================
@@ -69,21 +73,22 @@ drawInterface("SYSTEME");
 // ============================================================
 
 void drawInterface(
-const String& title
+    const String& title
 )
 {
-tft.fillScreen(
-COLOR_BACKGROUND
-);
+    tft.fillScreen(
+        COLOR_BACKGROUND
+    );
 
-drawHeader();
+    drawHeader();
 
-drawTitle(title);
+    drawTitle(
+        title
+    );
 
-clearContent();
+    clearContent();
 
-drawFooter();
-
+    drawFooter();
 }
 
 // ============================================================
@@ -92,26 +97,25 @@ drawFooter();
 
 void drawHeader()
 {
-drawHeaderTime();
+    drawHeaderTime();
 
-drawStatusSquares();
+    drawStatusSquares();
 
-drawProgressBar();
+    drawProgressBar();
 
-tft.drawFastHLine(
-    0,
-    HEADER_LINE_1_Y,
-    SCREEN_WIDTH,
-    COLOR_LINE
-);
+    tft.drawFastHLine(
+        0,
+        HEADER_LINE_1_Y,
+        SCREEN_WIDTH,
+        COLOR_LINE
+    );
 
-tft.drawFastHLine(
-    0,
-    HEADER_LINE_2_Y,
-    SCREEN_WIDTH,
-    COLOR_LINE
-);
-
+    tft.drawFastHLine(
+        0,
+        HEADER_LINE_2_Y,
+        SCREEN_WIDTH,
+        COLOR_LINE
+    );
 }
 
 // ============================================================
@@ -120,99 +124,44 @@ tft.drawFastHLine(
 
 void drawHeaderTime()
 {
-time_t now = time(nullptr);
+    time_t now =
+        time(nullptr);
 
-struct tm* timeinfo =
-    localtime(&now);
+    struct tm* timeinfo =
+        localtime(&now);
 
-char buffer[32];
+    char buffer[32];
 
-if (timeinfo != nullptr)
-{
-    snprintf(
-        buffer,
-        sizeof(buffer),
-        "%02d:%02d:%02d - %04d/%02d/%02d",
-        timeinfo->tm_hour,
-        timeinfo->tm_min,
-        timeinfo->tm_sec,
-        timeinfo->tm_year + 1900,
-        timeinfo->tm_mon + 1,
-        timeinfo->tm_mday
-    );
-}
-else
-{
-    snprintf(
-        buffer,
-        sizeof(buffer),
-        "--:--:-- - ----/--/--"
-    );
-}
-
-tft.setTextFont(1);
-tft.setTextSize(1);
-
-tft.setTextDatum(
-    TL_DATUM
-);
-
-tft.setTextColor(
-    COLOR_TEXT,
-    COLOR_BACKGROUND
-);
-
-tft.drawString(
-    String(buffer),
-    2,
-    0
-);
-
-}
-
-// ============================================================
-// STATUS
-//
-// Chaque statut est composé de :
-//
-// [W] [■]
-//
-// Le nombre d'indicateurs est dynamique.
-// ============================================================
-
-void drawStatusSquares()
-{
-const int squareSize = 7;
-const int spacing = 3;
-
-const int labelWidth = 8;
-
-int totalWidth = 0;
-
-for (uint8_t i = 0; i < statusCount; i++)
-{
-    totalWidth += labelWidth;
-    totalWidth += squareSize;
-
-    if (i < statusCount - 1)
+    if (timeinfo != nullptr)
     {
-        totalWidth += spacing;
+        snprintf(
+            buffer,
+            sizeof(buffer),
+            "%02d:%02d:%02d - %04d/%02d/%02d",
+            timeinfo->tm_hour,
+            timeinfo->tm_min,
+            timeinfo->tm_sec,
+            timeinfo->tm_year + 1900,
+            timeinfo->tm_mon + 1,
+            timeinfo->tm_mday
+        );
     }
-}
+    else
+    {
+        snprintf(
+            buffer,
+            sizeof(buffer),
+            "--:--:-- - ----/--/--"
+        );
+    }
 
-int startX =
-    SCREEN_WIDTH -
-    totalWidth -
-    2;
+    tft.setTextFont(
+        1
+    );
 
-const int y = 0;
-
-int x = startX;
-
-for (uint8_t i = 0; i < statusCount; i++)
-{
-    tft.setTextFont(1);
-    tft.setTextSize(1);
+    tft.setTextSize(
+        1
+    );
 
     tft.setTextDatum(
         TL_DATUM
@@ -224,99 +173,245 @@ for (uint8_t i = 0; i < statusCount; i++)
     );
 
     tft.drawString(
-        statusItems[i].label,
-        x,
-        y
+        String(buffer),
+        2,
+        0
     );
+}
 
-    x += labelWidth;
+// ============================================================
+// STATUTS
+// ============================================================
 
-    tft.fillRect(
-        x,
-        y,
-        squareSize,
-        squareSize,
-        statusItems[i].color
-    );
+void drawStatusSquares()
+{
+    const int squareSize = 7;
+    const int spacing = 2;
+    const int labelWidth = 7;
 
-    x += squareSize;
+    int activeCount = 0;
 
-    if (i < statusCount - 1)
+    for (int i = 0; i < MAX_STATUS; i++)
     {
-        x += spacing;
+        if (statusItems[i].active)
+        {
+            activeCount++;
+        }
+    }
+
+    if (activeCount == 0)
+    {
+        return;
+    }
+
+    int totalWidth = 0;
+
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        if (!statusItems[i].active)
+        {
+            continue;
+        }
+
+        totalWidth += labelWidth;
+        totalWidth += squareSize;
+        totalWidth += spacing;
+    }
+
+    totalWidth -= spacing;
+
+    int startX =
+        SCREEN_WIDTH -
+        totalWidth -
+        2;
+
+    int x =
+        startX;
+
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        if (!statusItems[i].active)
+        {
+            continue;
+        }
+
+        tft.setTextFont(
+            1
+        );
+
+        tft.setTextSize(
+            1
+        );
+
+        tft.setTextDatum(
+            TR_DATUM
+        );
+
+        tft.setTextColor(
+            COLOR_TEXT,
+            COLOR_BACKGROUND
+        );
+
+        tft.drawString(
+            statusItems[i].label,
+            x + labelWidth,
+            0
+        );
+
+        x += labelWidth;
+
+        tft.fillRect(
+            x,
+            0,
+            squareSize,
+            squareSize,
+            statusItems[i].color
+        );
+
+        x += squareSize;
+
+        if (i < MAX_STATUS - 1)
+        {
+            x += spacing;
+        }
     }
 }
 
-}
-
 // ============================================================
-// AJOUTER UN STATUS
+// AJOUT STATUT
 // ============================================================
 
-void addStatus(
-const String& label,
-uint16_t color
+bool addStatus(
+    const String& label,
+    uint16_t color
 )
 {
-if (statusCount >= MAX_STATUS)
-{
-return;
-}
+    if (label.length() == 0)
+    {
+        return false;
+    }
 
-statusItems[statusCount].label = label;
-statusItems[statusCount].color = color;
-statusItems[statusCount].active = true;
+    // Si le statut existe déjà,
+    // on met simplement sa couleur à jour.
 
-statusCount++;
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        if (
+            statusItems[i].active &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].color =
+                color;
 
-drawStatusSquares();
+            drawStatusSquares();
 
+            return true;
+        }
+    }
+
+    // Recherche d'un emplacement libre.
+
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        if (!statusItems[i].active)
+        {
+            statusItems[i].active =
+                true;
+
+            statusItems[i].label =
+                label;
+
+            statusItems[i].color =
+                color;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // ============================================================
-// MODIFIER UN STATUS
+// MODIFICATION STATUT
+// ============================================================
+
+bool setStatus(
+    const String& label,
+    uint16_t color
+)
+{
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        if (
+            statusItems[i].active &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].color =
+                color;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return addStatus(
+        label,
+        color
+    );
+}
+
+// ============================================================
+// COMPATIBILITE ANCIEN SYSTEME
 // ============================================================
 
 void setStatus(
-const String& label,
-uint16_t color
+    int index,
+    uint16_t color
 )
 {
-for (uint8_t i = 0; i < statusCount; i++)
-{
-if (statusItems[i].label == label)
-{
-statusItems[i].color = color;
-
-        drawStatusSquares();
-
+    if (
+        index < 0 ||
+        index >= MAX_STATUS
+    )
+    {
         return;
     }
-}
 
-addStatus(
-    label,
-    color
-);
+    if (!statusItems[index].active)
+    {
+        return;
+    }
 
+    statusItems[index].color =
+        color;
+
+    drawStatusSquares();
 }
 
 // ============================================================
-// SUPPRIMER TOUS LES STATUS
+// SUPPRESSION DES STATUTS
 // ============================================================
 
 void clearStatus()
 {
-statusCount = 0;
+    for (int i = 0; i < MAX_STATUS; i++)
+    {
+        statusItems[i].active =
+            false;
 
-tft.fillRect(
-    0,
-    0,
-    SCREEN_WIDTH,
-    HEADER_LINE_1_Y,
-    COLOR_BACKGROUND
-);
+        statusItems[i].label =
+            "";
 
+        statusItems[i].color =
+            COLOR_LINE;
+    }
+
+    drawStatusSquares();
 }
 
 // ============================================================
@@ -325,32 +420,31 @@ tft.fillRect(
 
 void drawProgressBar()
 {
-tft.drawFastHLine(
-0,
-PROGRESS_Y,
-SCREEN_WIDTH,
-COLOR_BACKGROUND
-);
-
-int width =
-    map(
-        progressValue,
-        0,
-        100,
-        0,
-        SCREEN_WIDTH
-    );
-
-if (width > 0)
-{
     tft.drawFastHLine(
         0,
         PROGRESS_Y,
-        width,
-        COLOR_PRIMARY
+        SCREEN_WIDTH,
+        COLOR_BACKGROUND
     );
-}
 
+    int width =
+        map(
+            progressValue,
+            0,
+            100,
+            0,
+            SCREEN_WIDTH
+        );
+
+    if (width > 0)
+    {
+        tft.drawFastHLine(
+            0,
+            PROGRESS_Y,
+            width,
+            COLOR_PRIMARY
+        );
+    }
 }
 
 // ============================================================
@@ -358,18 +452,18 @@ if (width > 0)
 // ============================================================
 
 void setProgress(
-uint8_t percent
+    uint8_t percent
 )
 {
-if (percent > 100)
-{
-percent = 100;
-}
+    if (percent > 100)
+    {
+        percent = 100;
+    }
 
-progressValue = percent;
+    progressValue =
+        percent;
 
-drawProgressBar();
-
+    drawProgressBar();
 }
 
 // ============================================================
@@ -377,42 +471,46 @@ drawProgressBar();
 // ============================================================
 
 void drawTitle(
-const String& title
+    const String& title
 )
 {
-tft.fillRect(
-0,
-TITLE_Y,
-SCREEN_WIDTH,
-TITLE_HEIGHT,
-COLOR_BACKGROUND
-);
+    tft.fillRect(
+        0,
+        TITLE_Y,
+        SCREEN_WIDTH,
+        TITLE_HEIGHT,
+        COLOR_BACKGROUND
+    );
 
-tft.setTextFont(2);
-tft.setTextSize(1);
+    tft.setTextFont(
+        2
+    );
 
-tft.setTextDatum(
-    TC_DATUM
-);
+    tft.setTextSize(
+        1
+    );
 
-tft.setTextColor(
-    COLOR_PRIMARY,
-    COLOR_BACKGROUND
-);
+    tft.setTextDatum(
+        TC_DATUM
+    );
 
-tft.drawString(
-    title,
-    SCREEN_WIDTH / 2,
-    TITLE_Y + 1
-);
+    tft.setTextColor(
+        COLOR_PRIMARY,
+        COLOR_BACKGROUND
+    );
 
-tft.drawFastHLine(
-    0,
-    TITLE_LINE_Y,
-    SCREEN_WIDTH,
-    COLOR_LINE
-);
+    tft.drawString(
+        title,
+        SCREEN_WIDTH / 2,
+        TITLE_Y + 1
+    );
 
+    tft.drawFastHLine(
+        0,
+        TITLE_LINE_Y,
+        SCREEN_WIDTH,
+        COLOR_LINE
+    );
 }
 
 // ============================================================
@@ -421,297 +519,280 @@ tft.drawFastHLine(
 
 void clearContent()
 {
-tft.fillRect(
-0,
-CONTENT_Y,
-SCREEN_WIDTH,
-CONTENT_HEIGHT,
-COLOR_BACKGROUND
-);
+    tft.fillRect(
+        0,
+        CONTENT_Y,
+        SCREEN_WIDTH,
+        CONTENT_HEIGHT,
+        COLOR_BACKGROUND
+    );
 }
 
 // ============================================================
 // FOOTER
-//
-// ↑ | ↓ | ← | → | ¤ | X | V
 // ============================================================
 
 void drawFooter()
 {
-const int y = FOOTER_Y;
-const int height = FOOTER_HEIGHT;
+    const int y =
+        FOOTER_Y;
 
-tft.fillRect(
-    0,
-    y,
-    SCREEN_WIDTH,
-    height,
-    COLOR_BACKGROUND
-);
+    const int height =
+        FOOTER_HEIGHT;
 
-tft.drawFastHLine(
-    0,
-    y,
-    SCREEN_WIDTH,
-    COLOR_LINE
-);
+    tft.fillRect(
+        0,
+        y,
+        SCREEN_WIDTH,
+        height,
+        COLOR_BACKGROUND
+    );
 
-const int buttonCount = 7;
+    tft.drawFastHLine(
+        0,
+        y,
+        SCREEN_WIDTH,
+        COLOR_LINE
+    );
 
-const int baseWidth =
-    SCREEN_WIDTH / buttonCount;
+    const int buttonCount = 7;
 
-const int remainder =
-    SCREEN_WIDTH % buttonCount;
+    const int baseWidth =
+        SCREEN_WIDTH /
+        buttonCount;
 
-int x = 0;
+    const int remainder =
+        SCREEN_WIDTH %
+        buttonCount;
 
-// HAUT
+    int x = 0;
 
-int w =
-    baseWidth +
-    (0 < remainder ? 1 : 0);
+    int w =
+        baseWidth +
+        (0 < remainder ? 1 : 0);
 
-drawArrow(
-    x + w / 2,
-    y + height / 2,
-    w,
-    height,
-    0,
-    COLOR_BUTTON
-);
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        0,
+        COLOR_BUTTON
+    );
 
-x += w;
+    x += w;
 
-// BAS
+    w =
+        baseWidth +
+        (1 < remainder ? 1 : 0);
 
-w =
-    baseWidth +
-    (1 < remainder ? 1 : 0);
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        1,
+        COLOR_BUTTON
+    );
 
-drawArrow(
-    x + w / 2,
-    y + height / 2,
-    w,
-    height,
-    1,
-    COLOR_BUTTON
-);
+    x += w;
 
-x += w;
+    w =
+        baseWidth +
+        (2 < remainder ? 1 : 0);
 
-// GAUCHE
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        2,
+        COLOR_BUTTON
+    );
 
-w =
-    baseWidth +
-    (2 < remainder ? 1 : 0);
+    x += w;
 
-drawArrow(
-    x + w / 2,
-    y + height / 2,
-    w,
-    height,
-    2,
-    COLOR_BUTTON
-);
+    w =
+        baseWidth +
+        (3 < remainder ? 1 : 0);
 
-x += w;
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        3,
+        COLOR_BUTTON
+    );
 
-// DROITE
+    x += w;
 
-w =
-    baseWidth +
-    (3 < remainder ? 1 : 0);
+    w =
+        baseWidth +
+        (4 < remainder ? 1 : 0);
 
-drawArrow(
-    x + w / 2,
-    y + height / 2,
-    w,
-    height,
-    3,
-    COLOR_BUTTON
-);
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "¤",
+        COLOR_BUTTON
+    );
 
-x += w;
+    x += w;
 
-// MENU
+    w =
+        baseWidth +
+        (5 < remainder ? 1 : 0);
 
-w =
-    baseWidth +
-    (4 < remainder ? 1 : 0);
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "X",
+        COLOR_ERROR
+    );
 
-drawButton(
-    x,
-    y + 1,
-    w,
-    height - 1,
-    "¤",
-    COLOR_BUTTON
-);
+    x += w;
 
-x += w;
+    w =
+        SCREEN_WIDTH -
+        x;
 
-// ANNULER
-
-w =
-    baseWidth +
-    (5 < remainder ? 1 : 0);
-
-drawButton(
-    x,
-    y + 1,
-    w,
-    height - 1,
-    "X",
-    COLOR_ERROR
-);
-
-x += w;
-
-// VALIDER
-
-w =
-    SCREEN_WIDTH - x;
-
-drawButton(
-    x,
-    y + 1,
-    w,
-    height - 1,
-    "V",
-    COLOR_OK
-);
-
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "V",
+        COLOR_OK
+    );
 }
 
 // ============================================================
 // FLECHE
-//
-// 0 = haut
-// 1 = bas
-// 2 = gauche
-// 3 = droite
 // ============================================================
 
 static void drawArrow(
-int centerX,
-int centerY,
-int w,
-int h,
-uint8_t direction,
-uint16_t color
+    int centerX,
+    int centerY,
+    int w,
+    int h,
+    uint8_t direction,
+    uint16_t color
 )
 {
-int margin = 3;
+    int margin = 3;
 
-int left =
-    centerX -
-    w / 2;
+    int left =
+        centerX -
+        w / 2;
 
-int top =
-    centerY -
-    h / 2;
+    int top =
+        centerY -
+        h / 2;
 
-int right =
-    centerX +
-    w / 2;
+    int right =
+        centerX +
+        w / 2;
 
-int bottom =
-    centerY +
-    h / 2;
+    int bottom =
+        centerY +
+        h / 2;
 
-tft.drawRect(
-    left,
-    top,
-    w,
-    h,
-    COLOR_LINE
-);
-
-int shaft = 4;
-int head = 6;
-
-if (direction == 0)
-{
-    tft.fillRect(
-        centerX - shaft / 2,
-        centerY - head,
-        shaft,
-        head + 7,
-        color
+    tft.drawRect(
+        left,
+        top,
+        w,
+        h,
+        COLOR_LINE
     );
 
-    tft.fillTriangle(
-        centerX,
-        top + margin + 2,
-        centerX - head,
-        top + margin + 8,
-        centerX + head,
-        top + margin + 8,
-        color
-    );
-}
-else if (direction == 1)
-{
-    tft.fillRect(
-        centerX - shaft / 2,
-        centerY - 7,
-        shaft,
-        head + 7,
-        color
-    );
+    int shaft = 4;
+    int head = 6;
 
-    tft.fillTriangle(
-        centerX,
-        bottom - margin - 2,
-        centerX - head,
-        bottom - margin - 8,
-        centerX + head,
-        bottom - margin - 8,
-        color
-    );
-}
-else if (direction == 2)
-{
-    tft.fillRect(
-        centerX - head,
-        centerY - shaft / 2,
-        head + 7,
-        shaft,
-        color
-    );
+    if (direction == 0)
+    {
+        tft.fillRect(
+            centerX - shaft / 2,
+            centerY - head,
+            shaft,
+            head + 7,
+            color
+        );
 
-    tft.fillTriangle(
-        left + margin + 2,
-        centerY,
-        left + margin + 8,
-        centerY - head,
-        left + margin + 8,
-        centerY + head,
-        color
-    );
-}
-else
-{
-    tft.fillRect(
-        centerX - 7,
-        centerY - shaft / 2,
-        head + 7,
-        shaft,
-        color
-    );
+        tft.fillTriangle(
+            centerX,
+            top + margin + 2,
+            centerX - head,
+            top + margin + 8,
+            centerX + head,
+            top + margin + 8,
+            color
+        );
+    }
+    else if (direction == 1)
+    {
+        tft.fillRect(
+            centerX - shaft / 2,
+            centerY - 7,
+            shaft,
+            head + 7,
+            color
+        );
 
-    tft.fillTriangle(
-        right - margin - 2,
-        centerY,
-        right - margin - 8,
-        centerY - head,
-        right - margin - 8,
-        centerY + head,
-        color
-    );
-}
+        tft.fillTriangle(
+            centerX,
+            bottom - margin - 2,
+            centerX - head,
+            bottom - margin - 8,
+            centerX + head,
+            bottom - margin - 8,
+            color
+        );
+    }
+    else if (direction == 2)
+    {
+        tft.fillRect(
+            centerX - head,
+            centerY - shaft / 2,
+            head + 7,
+            shaft,
+            color
+        );
 
+        tft.fillTriangle(
+            left + margin + 2,
+            centerY,
+            left + margin + 8,
+            centerY - head,
+            left + margin + 8,
+            centerY + head,
+            color
+        );
+    }
+    else
+    {
+        tft.fillRect(
+            centerX - 7,
+            centerY - shaft / 2,
+            head + 7,
+            shaft,
+            color
+        );
+
+        tft.fillTriangle(
+            right - margin - 2,
+            centerY,
+            right - margin - 8,
+            centerY - head,
+            right - margin - 8,
+            centerY + head,
+            color
+        );
+    }
 }
 
 // ============================================================
@@ -719,61 +800,69 @@ else
 // ============================================================
 
 void drawButton(
-int x,
-int y,
-int w,
-int h,
-const String& label,
-uint16_t color
+    int x,
+    int y,
+    int w,
+    int h,
+    const String& label,
+    uint16_t color
 )
 {
-if (w < 3 || h < 3)
-{
-return;
-}
+    if (
+        w < 3 ||
+        h < 3
+    )
+    {
+        return;
+    }
 
-tft.drawRect(
-    x,
-    y,
-    w,
-    h,
-    COLOR_LINE
-);
+    tft.drawRect(
+        x,
+        y,
+        w,
+        h,
+        COLOR_LINE
+    );
 
-tft.fillRect(
-    x + 1,
-    y + 1,
-    w - 2,
-    h - 2,
-    color
-);
+    tft.fillRect(
+        x + 1,
+        y + 1,
+        w - 2,
+        h - 2,
+        color
+    );
 
-tft.setTextFont(1);
-tft.setTextSize(1);
+    tft.setTextFont(
+        1
+    );
 
-tft.setTextDatum(
-    MC_DATUM
-);
+    tft.setTextSize(
+        1
+    );
 
-uint16_t textColor =
-    COLOR_BUTTON_TEXT;
+    tft.setTextDatum(
+        MC_DATUM
+    );
 
-if (color == COLOR_OK)
-{
-    textColor = TFT_BLACK;
-}
+    uint16_t textColor =
+        COLOR_BUTTON_TEXT;
 
-tft.setTextColor(
-    textColor,
-    color
-);
+    if (color == COLOR_OK)
+    {
+        textColor =
+            TFT_BLACK;
+    }
 
-tft.drawString(
-    label,
-    x + w / 2,
-    y + h / 2
-);
+    tft.setTextColor(
+        textColor,
+        color
+    );
 
+    tft.drawString(
+        label,
+        x + w / 2,
+        y + h / 2
+    );
 }
 
 // ============================================================
@@ -781,28 +870,32 @@ tft.drawString(
 // ============================================================
 
 void centerText(
-const String& text,
-int y,
-uint8_t size,
-uint16_t color
+    const String& text,
+    int y,
+    uint8_t size,
+    uint16_t color
 )
 {
-tft.setTextFont(1);
-tft.setTextSize(size);
+    tft.setTextFont(
+        1
+    );
 
-tft.setTextDatum(
-    TC_DATUM
-);
+    tft.setTextSize(
+        size
+    );
 
-tft.setTextColor(
-    color,
-    COLOR_BACKGROUND
-);
+    tft.setTextDatum(
+        TC_DATUM
+    );
 
-tft.drawString(
-    text,
-    SCREEN_WIDTH / 2,
-    y
-);
+    tft.setTextColor(
+        color,
+        COLOR_BACKGROUND
+    );
 
+    tft.drawString(
+        text,
+        SCREEN_WIDTH / 2,
+        y
+    );
 }
