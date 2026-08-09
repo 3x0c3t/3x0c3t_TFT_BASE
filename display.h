@@ -21,84 +21,22 @@ void displayInit();
 // INTERFACE
 // ============================================================
 
-void drawInterface(
-    const String& title
-);
+void drawInterface(const String& title);
 
 // ============================================================
 // HEADER
 // ============================================================
 
 void drawHeader();
-
 void drawHeaderTime();
-
 void drawStatusSquares();
-
 void drawProgressBar();
-
-// ============================================================
-// INDICATEURS
-// ============================================================
-//
-// Ajouter un indicateur :
-//
-// addStatus("W", COLOR_OK);
-//
-// Supprimer un indicateur :
-//
-// removeStatus("W");
-//
-// Modifier sa couleur :
-//
-// setStatus("W", COLOR_ERROR);
-//
-// Activer / désactiver :
-//
-// enableStatus("W");
-// disableStatus("W");
-//
-// ============================================================
-
-bool addStatus(
-    const String& label,
-    uint16_t color
-);
-
-bool removeStatus(
-    const String& label
-);
-
-bool setStatus(
-    const String& label,
-    uint16_t color
-);
-
-bool enableStatus(
-    const String& label
-);
-
-bool disableStatus(
-    const String& label
-);
-
-void clearStatus();
-
-// ============================================================
-// PROGRESSION
-// ============================================================
-
-void setProgress(
-    uint8_t percent
-);
 
 // ============================================================
 // TITRE
 // ============================================================
 
-void drawTitle(
-    const String& title
-);
+void drawTitle(const String& title);
 
 // ============================================================
 // CONTENU
@@ -113,27 +51,58 @@ void clearContent();
 void drawFooter();
 
 // ============================================================
-// BOUTON
+// BOUTONS
 // ============================================================
 
 void drawButton(
-    int x,
-    int y,
-    int w,
-    int h,
-    const String& label,
-    uint16_t color
+int x,
+int y,
+int w,
+int h,
+const String& label,
+uint16_t color
 );
 
 // ============================================================
-// TEXTE CENTRE
+// TEXTE
 // ============================================================
 
 void centerText(
-    const String& text,
-    int y,
-    uint8_t size,
-    uint16_t color
+const String& text,
+int y,
+uint8_t size,
+uint16_t color
+);
+
+// ============================================================
+// PROGRESSION
+// ============================================================
+
+void setProgress(uint8_t percent);
+
+// ============================================================
+// SYSTEME DE STATUS
+//
+// Les indicateurs sont dynamiques.
+//
+// Exemple :
+// addStatus("W", COLOR_OK);
+// addStatus("S", COLOR_ERROR);
+//
+// setStatus("W", COLOR_OK);
+// setStatus("W", COLOR_ERROR);
+// ============================================================
+
+void clearStatus();
+
+void addStatus(
+const String& label,
+uint16_t color
+);
+
+void setStatus(
+const String& label,
+uint16_t color
 );
 
 #endif
