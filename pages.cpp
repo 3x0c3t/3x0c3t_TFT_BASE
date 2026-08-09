@@ -1,10 +1,10 @@
 #include "pages.h"
 #include "display.h"
-#include "config.h"
 #include "settings.h"
+#include "config.h"
 
 // ============================================================
-// ETAT
+// PAGE COURANTE
 // ============================================================
 
 static PageID currentPage = PAGE_MAIN;
@@ -19,16 +19,32 @@ void pagesInit()
 }
 
 // ============================================================
-// PAGE COURANTE
+// NOM DE PAGE
 // ============================================================
 
-PageID pagesGetCurrent()
+static const char* pageName(PageID page)
 {
-    return currentPage;
+    switch (page)
+    {
+        case PAGE_MAIN:
+            return "MAIN";
+
+        case PAGE_METEO:
+            return "METEO";
+
+        case PAGE_SETTINGS:
+            return "REGLAGES";
+
+        case PAGE_SYSTEM:
+            return "SYSTEME";
+
+        default:
+            return "";
+    }
 }
 
 // ============================================================
-// AFFICHAGE
+// AFFICHAGE PAGE
 // ============================================================
 
 void pagesShow(PageID page)
@@ -40,25 +56,33 @@ void pagesShow(PageID page)
 
     currentPage = page;
 
-    // --------------------------------------------------------
-    // Nettoyage contenu
-    // --------------------------------------------------------
+    // ========================================================
+    // INTERFACE FIXE
+    // ========================================================
 
-    tft.fillRect(
-        0,
-        CONTENT_Y,
-        SCREEN_WIDTH,
-        CONTENT_HEIGHT,
-        COLOR_BACKGROUND
+    drawHeader();
+
+    clearContent();
+
+    drawTitle(
+        pageName(currentPage)
     );
 
-    // --------------------------------------------------------
-    // PAGE MAIN
-    // --------------------------------------------------------
+    drawFooter();
 
-    if (currentPage == PAGE_MAIN)
+    // ========================================================
+    // MAIN
+    // ========================================================
+
+    if (page == PAGE_MAIN)
     {
-        drawTitle("-3x0c3t- B04RD");
+        drawTitle(
+            "-3x0c3t- B04RD"
+        );
+
+        // ----------------------------------------------------
+        // METEO
+        // ----------------------------------------------------
 
         drawButton(
             20,
@@ -68,6 +92,10 @@ void pagesShow(PageID page)
             "METEO",
             COLOR_BUTTON_BG
         );
+
+        // ----------------------------------------------------
+        // WIFI
+        // ----------------------------------------------------
 
         drawButton(
             20,
@@ -81,15 +109,17 @@ void pagesShow(PageID page)
         return;
     }
 
-    // --------------------------------------------------------
-    // PAGE METEO
-    // --------------------------------------------------------
+    // ========================================================
+    // METEO
+    // ========================================================
 
-    if (currentPage == PAGE_METEO)
+    if (page == PAGE_METEO)
     {
-        drawTitle("METEO");
+        drawTitle(
+            "METEO"
+        );
 
-        tft.setTextFont(1);
+        tft.setTextFont(2);
         tft.setTextSize(1);
         tft.setTextDatum(MC_DATUM);
 
@@ -101,31 +131,33 @@ void pagesShow(PageID page)
         tft.drawString(
             "METEO",
             SCREEN_WIDTH / 2,
-            CONTENT_Y + 60
+            CONTENT_Y + 50
         );
 
         return;
     }
 
-    // --------------------------------------------------------
-    // PAGE SETTINGS
-    // --------------------------------------------------------
+    // ========================================================
+    // SETTINGS
+    // ========================================================
 
-    if (currentPage == PAGE_SETTINGS)
+    if (page == PAGE_SETTINGS)
     {
         settingsShow();
         return;
     }
 
-    // --------------------------------------------------------
-    // PAGE SYSTEM
-    // --------------------------------------------------------
+    // ========================================================
+    // SYSTEME
+    // ========================================================
 
-    if (currentPage == PAGE_SYSTEM)
+    if (page == PAGE_SYSTEM)
     {
-        drawTitle("SYSTEME");
+        drawTitle(
+            "SYSTEME"
+        );
 
-        tft.setTextFont(1);
+        tft.setTextFont(2);
         tft.setTextSize(1);
         tft.setTextDatum(MC_DATUM);
 
@@ -137,7 +169,7 @@ void pagesShow(PageID page)
         tft.drawString(
             "SYSTEME",
             SCREEN_WIDTH / 2,
-            CONTENT_Y + 60
+            CONTENT_Y + 50
         );
 
         return;
@@ -145,7 +177,7 @@ void pagesShow(PageID page)
 }
 
 // ============================================================
-// NAVIGATION
+// PAGE SUIVANTE
 // ============================================================
 
 void pagesNext()
@@ -157,9 +189,13 @@ void pagesNext()
         next = PAGE_MAIN;
     }
 
-    pagesShow((PageID)next);
+    pagesShow(
+        (PageID)next
+    );
 }
 
+// ============================================================
+// PAGE PRECEDENTE
 // ============================================================
 
 void pagesPrevious()
@@ -171,131 +207,71 @@ void pagesPrevious()
         previous = PAGE_COUNT - 1;
     }
 
-    pagesShow((PageID)previous);
+    pagesShow(
+        (PageID)previous
+    );
 }
 
 // ============================================================
+// PAGE COURANTE
+// ============================================================
 
-void pagesGoMain()
+PageID pagesCurrent()
 {
-    pagesShow(PAGE_MAIN);
+    return currentPage;
 }
 
 // ============================================================
+// RETOUR MAIN
+// ============================================================
 
-void pagesGoMeteo()
+void pagesHome()
 {
-    pagesShow(PAGE_METEO);
+    pagesShow(
+        PAGE_MAIN
+    );
 }
 
 // ============================================================
+// OUVRIR SETTINGS
+// ============================================================
 
-void pagesGoSettings()
+void pagesSettings()
 {
-    pagesShow(PAGE_SETTINGS);
-}
-
-// ============================================================
-
-void pagesGoSystem()
-{
-    pagesShow(PAGE_SYSTEM);
-}
-
-// ============================================================
-// BOUTON HAUT
-// ============================================================
-
-void pagesButtonUp()
-{
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonUp();
-        return;
-    }
-
-    pagesPrevious();
-}
-
-// ============================================================
-// BOUTON BAS
-// ============================================================
-
-void pagesButtonDown()
-{
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonDown();
-        return;
-    }
-
-    pagesNext();
-}
-
-// ============================================================
-// BOUTON GAUCHE
-// ============================================================
-
-void pagesButtonLeft()
-{
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonLeft();
-    }
-}
-
-// ============================================================
-// BOUTON DROITE
-// ============================================================
-
-void pagesButtonRight()
-{
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonRight();
-    }
+    pagesShow(
+        PAGE_SETTINGS
+    );
 }
 
 // ============================================================
 // BOUTON MENU
 // ============================================================
 
-void pagesButtonMenu()
+void pagesMenu()
 {
-    if (currentPage == PAGE_MAIN)
-    {
-        pagesGoSettings();
-        return;
-    }
-
-    pagesGoMain();
+    pagesShow(
+        PAGE_SETTINGS
+    );
 }
 
 // ============================================================
-// BOUTON OK
+// BOUTON METEO
 // ============================================================
 
-void pagesButtonOk()
+void pagesButtonMeteo()
 {
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonOk();
-        return;
-    }
+    pagesShow(
+        PAGE_METEO
+    );
 }
 
 // ============================================================
-// BOUTON CANCEL
+// BOUTON WIFI
 // ============================================================
 
-void pagesButtonCancel()
+void pagesButtonWifi()
 {
-    if (currentPage == PAGE_SETTINGS)
-    {
-        settingsButtonCancel();
-        pagesGoMain();
-        return;
-    }
-
-    pagesGoMain();
+    pagesShow(
+        PAGE_MAIN
+    );
 }
