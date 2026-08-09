@@ -1,17 +1,17 @@
 #include "pWifi.h"
-
-#include <ESP8266WiFi.h>
-
+#include "pages.h"
 #include "config.h"
 #include "display.h"
-#include "pages.h"
-#include "wifi.h"
+
+#include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <ESP8266WiFi.h>
 
 // ============================================================
 // ETAT
 // ============================================================
 
-static int wifiIndex = 0;
+static bool wifiPageInitialized = false;
 
 // ============================================================
 // INITIALISATION
@@ -19,7 +19,7 @@ static int wifiIndex = 0;
 
 void pWifiInit()
 {
-wifiIndex = 0;
+    wifiPageInitialized = true;
 }
 
 // ============================================================
@@ -28,181 +28,131 @@ wifiIndex = 0;
 
 void pWifiShow()
 {
-tft.fillRect(
-0,
-CONTENT_Y,
-SCREEN_WIDTH,
-CONTENT_HEIGHT,
-COLOR_BACKGROUND
-);
+    // Nettoyage uniquement de la zone contenu.
+    // Le header reste intact.
 
-drawTitle("WIFI");
-
-tft.setTextFont(1);
-tft.setTextSize(1);
-tft.setTextDatum(TL_DATUM);
-
-// --------------------------------------------------------
-// Etat
-// --------------------------------------------------------
-
-tft.setTextColor(
-    COLOR_TEXT,
-    COLOR_BACKGROUND
-);
-
-tft.drawString(
-    "Etat WiFi",
-    10,
-    CONTENT_Y + 15
-);
-
-// --------------------------------------------------------
-// Connexion
-// --------------------------------------------------------
-
-if (WiFi.status() == WL_CONNECTED)
-{
-    tft.setTextColor(
-        COLOR_OK,
+    tft.fillRect(
+        0,
+        CONTENT_Y,
+        SCREEN_WIDTH,
+        CONTENT_HEIGHT,
         COLOR_BACKGROUND
     );
 
-    tft.drawString(
-        "CONNECTE",
-        10,
-        CONTENT_Y + 35
-    );
+    drawTitle("WIFI");
 
-    // ----------------------------------------------------
+    tft.setTextColor(COLOR_TEXT);
+    tft.setTextSize(1);
+
+    int y = CONTENT_Y + 10;
+
+    // --------------------------------------------------------
+    // TITRE
+    // --------------------------------------------------------
+
+    tft.setCursor(10, y);
+    tft.print("WIFI");
+
+    y += 18;
+
+    // --------------------------------------------------------
     // SSID
-    // ----------------------------------------------------
+    // --------------------------------------------------------
 
-    tft.setTextColor(
-        COLOR_TEXT,
-        COLOR_BACKGROUND
-    );
+    tft.setCursor(10, y);
+    tft.print("SSID : ");
 
-    tft.drawString(
-        "SSID : " + WiFi.SSID(),
-        10,
-        CONTENT_Y + 55
-    );
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        tft.print(WiFi.SSID());
+    }
+    else
+    {
+        tft.print("Non connecte");
+    }
 
-    // ----------------------------------------------------
-    // Adresse IP
-    // ----------------------------------------------------
+    y += 18;
 
-    tft.drawString(
-        "IP : " + WiFi.localIP().toString(),
-        10,
-        CONTENT_Y + 75
-    );
+    // --------------------------------------------------------
+    // ETAT
+    // --------------------------------------------------------
 
-    // ----------------------------------------------------
-    // RSSI
-    // ----------------------------------------------------
+    tft.setCursor(10, y);
+    tft.print("Etat : ");
 
-    tft.drawString(
-        "Signal : " + String(WiFi.RSSI()) + " dBm",
-        10,
-        CONTENT_Y + 95
-    );
-}
-else
-{
-    tft.setTextColor(
-        COLOR_ERROR,
-        COLOR_BACKGROUND
-    );
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        tft.print("CONNECTE");
+    }
+    else
+    {
+        tft.print("DECONNECTE");
+    }
 
-    tft.drawString(
-        "DECONNECTE",
-        10,
-        CONTENT_Y + 35
-    );
-}
+    // --------------------------------------------------------
+    // INFORMATIONS WIFI
+    // --------------------------------------------------------
 
-// --------------------------------------------------------
-// Commandes
-// --------------------------------------------------------
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        y += 18;
 
-tft.setTextColor(
-    COLOR_TEXT,
-    COLOR_BACKGROUND
-);
+        tft.setCursor(10, y);
+        tft.print("IP : ");
+        tft.print(WiFi.localIP());
 
-tft.drawString(
-    "OK : actualiser",
-    10,
-    CONTENT_Y + 125
-);
+        y += 18;
 
-tft.drawString(
-    "CANCEL : retour",
-    10,
-    CONTENT_Y + 140
-);
-
+        tft.setCursor(10, y);
+        tft.print("RSSI : ");
+        tft.print(WiFi.RSSI());
+        tft.print(" dBm");
+    }
 }
 
 // ============================================================
-// UPDATE
+// MISE A JOUR
 // ============================================================
 
 void pWifiUpdate()
 {
-// Pas de rafraichissement automatique
+    // Rien pour le moment.
 }
 
 // ============================================================
-// BOUTON HAUT
+// BOUTON UP
 // ============================================================
 
 void pWifiButtonUp()
 {
-wifiIndex--;
-
-if (wifiIndex < 0)
-{
-    wifiIndex = 0;
-}
-
-pWifiShow();
-
+    // Rien pour le moment.
 }
 
 // ============================================================
-// BOUTON BAS
+// BOUTON DOWN
 // ============================================================
 
 void pWifiButtonDown()
 {
-wifiIndex++;
-
-if (wifiIndex > 0)
-{
-    wifiIndex = 0;
-}
-
-pWifiShow();
-
+    // Rien pour le moment.
 }
 
 // ============================================================
-// BOUTON GAUCHE
+// BOUTON LEFT
 // ============================================================
 
 void pWifiButtonLeft()
 {
+    // Rien pour le moment.
 }
 
 // ============================================================
-// BOUTON DROITE
+// BOUTON RIGHT
 // ============================================================
 
 void pWifiButtonRight()
 {
+    // Rien pour le moment.
 }
 
 // ============================================================
@@ -211,7 +161,7 @@ void pWifiButtonRight()
 
 void pWifiButtonOk()
 {
-pWifiShow();
+    // Rien pour le moment.
 }
 
 // ============================================================
@@ -220,5 +170,6 @@ pWifiShow();
 
 void pWifiButtonCancel()
 {
-pagesMain();
+    // Retour vers la page principale.
+    pagesShow(PAGE_MAIN);
 }
