@@ -136,15 +136,15 @@
 
 // ------------------------------------------------------------
 // Barre de progression Splash
+// Identique à la barre de progression du HEADER
 // ------------------------------------------------------------
 
-#define SPLASH_PROGRESS_X        20
-#define SPLASH_PROGRESS_Y        205
-#define SPLASH_PROGRESS_WIDTH    200
-#define SPLASH_PROGRESS_HEIGHT   1
+#define SPLASH_PROGRESS_X        0
+#define SPLASH_PROGRESS_Y        PROGRESS_Y
+#define SPLASH_PROGRESS_WIDTH    SCREEN_WIDTH
+#define SPLASH_PROGRESS_HEIGHT   PROGRESS_HEIGHT
 
-#define SPLASH_PROGRESS_BORDER   COLOR_LINE
-#define SPLASH_PROGRESS_COLOR    COLOR_PRIMARY
+#define SPLASH_PROGRESS_COLOR    COLOR_PROGRESS
 
 // ------------------------------------------------------------
 // Temps Splash

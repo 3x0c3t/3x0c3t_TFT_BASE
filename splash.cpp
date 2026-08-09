@@ -1,7 +1,6 @@
 #include "splash.h"
 
 #include <Arduino.h>
-
 #include "config.h"
 #include "display.h"
 
@@ -80,15 +79,17 @@ void splashShow()
     );
 
     // ========================================================
-    // CADRE DE PROGRESSION
+    // BARRE DE PROGRESSION
+    //
+    // IDENTIQUE A CELLE DU HEADER PRINCIPAL
     // ========================================================
 
-    tft.drawRect(
-        SPLASH_PROGRESS_X - 1,
-        SPLASH_PROGRESS_Y - 1,
-        SPLASH_PROGRESS_WIDTH + 2,
-        SPLASH_PROGRESS_HEIGHT + 2,
-        SPLASH_PROGRESS_BORDER
+    tft.fillRect(
+        SPLASH_PROGRESS_X,
+        SPLASH_PROGRESS_Y,
+        SPLASH_PROGRESS_WIDTH,
+        SPLASH_PROGRESS_HEIGHT,
+        SPLASH_BACKGROUND
     );
 
     // ========================================================
@@ -97,10 +98,15 @@ void splashShow()
 
     while (progress < 100)
     {
-        unsigned long now = millis();
+        unsigned long now =
+            millis();
 
         unsigned long elapsed =
             now - startTime;
+
+        // ----------------------------------------------------
+        // CALCUL PROGRESSION
+        // ----------------------------------------------------
 
         if (elapsed >= SPLASH_DURATION)
         {
@@ -113,14 +119,17 @@ void splashShow()
                 SPLASH_DURATION;
         }
 
-        // Mise à jour limitée
-        // pour éviter de redessiner inutilement
+        // ----------------------------------------------------
+        // MISE A JOUR
+        // ----------------------------------------------------
+
         if (
             now - lastUpdate >=
             SPLASH_UPDATE_INTERVAL
         )
         {
-            lastUpdate = now;
+            lastUpdate =
+                now;
 
             int progressWidth =
                 (
@@ -128,7 +137,10 @@ void splashShow()
                     progress
                 ) / 100;
 
-            // Effacement de la barre
+            // ------------------------------------------------
+            // EFFACEMENT
+            // ------------------------------------------------
+
             tft.fillRect(
                 SPLASH_PROGRESS_X,
                 SPLASH_PROGRESS_Y,
@@ -137,7 +149,10 @@ void splashShow()
                 SPLASH_BACKGROUND
             );
 
-            // Progression
+            // ------------------------------------------------
+            // PROGRESSION
+            // ------------------------------------------------
+
             if (progressWidth > 0)
             {
                 tft.fillRect(
