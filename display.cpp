@@ -1,7 +1,5 @@
 #include "display.h"
-
 #include <time.h>
-
 #include "config.h"
 
 // ============================================================
@@ -350,7 +348,7 @@ void drawFooter()
     );
 
     // --------------------------------------------------------
-    // LIGNE SUPERIEURE
+    // CONTOUR SUPERIEUR
     // --------------------------------------------------------
 
     tft.drawFastHLine(
@@ -360,34 +358,45 @@ void drawFooter()
         COLOR_FOOTER_LINE
     );
 
-// --------------------------------------------------------
-// BOUTON MENU
-// --------------------------------------------------------
+    // --------------------------------------------------------
+    // BOUTON MENU
+    // --------------------------------------------------------
 
-const int buttonY =
-    y + 1;
+    const int buttonY =
+        y + 1;
 
-const int buttonHeight =
-    height - 1;
+    const int buttonHeight =
+        height - 1;
 
-const int iconSize =
-    FOOTER_MENU_ICON_SIZE;
+    const int iconSize =
+        FOOTER_MENU_ICON_SIZE;
 
-const int iconX =
-    (FOOTER_MENU_WIDTH - iconSize) / 2;
+    const int iconX =
+        (FOOTER_MENU_WIDTH - iconSize) / 2;
 
-const int iconY =
-    buttonY +
-    (buttonHeight - iconSize) / 2;
+    const int iconY =
+        buttonY +
+        (buttonHeight - iconSize) / 2;
 
-tft.drawRoundRect(
-    iconX,
-    iconY,
-    iconSize,
-    iconSize,
-    FOOTER_MENU_ICON_RADIUS,
-    COLOR_FOOTER_MENU
-);
+    // Fond du bouton
+    tft.fillRoundRect(
+        iconX,
+        iconY,
+        iconSize,
+        iconSize,
+        FOOTER_MENU_ICON_RADIUS,
+        COLOR_FOOTER_MENU
+    );
+
+    // Contour du bouton
+    tft.drawRoundRect(
+        iconX,
+        iconY,
+        iconSize,
+        iconSize,
+        FOOTER_MENU_ICON_RADIUS,
+        COLOR_FOOTER_MENU_LINE
+    );
 
     // --------------------------------------------------------
     // SEPARATION MENU / INFORMATIONS
@@ -431,10 +440,6 @@ void drawFooterInfo(
     const int height =
         FOOTER_HEIGHT - 2;
 
-    // --------------------------------------------------------
-    // NETTOYAGE
-    // --------------------------------------------------------
-
     tft.fillRect(
         x,
         y,
@@ -443,18 +448,10 @@ void drawFooterInfo(
         COLOR_FOOTER_BG
     );
 
-    // --------------------------------------------------------
-    // PAS DE TEXTE
-    // --------------------------------------------------------
-
     if (text.length() == 0)
     {
         return;
     }
-
-    // --------------------------------------------------------
-    // TEXTE
-    // --------------------------------------------------------
 
     tft.setTextFont(
         1
@@ -520,10 +517,6 @@ static void drawArrow(
     const int shaft = 3;
     const int head = 5;
 
-    // --------------------------------------------------------
-    // HAUT
-    // --------------------------------------------------------
-
     if (direction == 0)
     {
         tft.fillRect(
@@ -544,11 +537,6 @@ static void drawArrow(
             color
         );
     }
-
-    // --------------------------------------------------------
-    // BAS
-    // --------------------------------------------------------
-
     else if (direction == 1)
     {
         tft.fillRect(
@@ -569,11 +557,6 @@ static void drawArrow(
             color
         );
     }
-
-    // --------------------------------------------------------
-    // GAUCHE
-    // --------------------------------------------------------
-
     else if (direction == 2)
     {
         tft.fillRect(
@@ -594,11 +577,6 @@ static void drawArrow(
             color
         );
     }
-
-    // --------------------------------------------------------
-    // DROITE
-    // --------------------------------------------------------
-
     else
     {
         tft.fillRect(
@@ -622,7 +600,7 @@ static void drawArrow(
 }
 
 // ============================================================
-// BOUTON
+// BOUTON GENERIQUE
 // ============================================================
 
 void drawButton(
@@ -639,10 +617,6 @@ void drawButton(
         return;
     }
 
-    // --------------------------------------------------------
-    // BORDURE
-    // --------------------------------------------------------
-
     tft.drawRect(
         x,
         y,
@@ -651,10 +625,6 @@ void drawButton(
         COLOR_FOOTER_LINE
     );
 
-    // --------------------------------------------------------
-    // FOND
-    // --------------------------------------------------------
-
     tft.fillRect(
         x + 1,
         y + 1,
@@ -662,10 +632,6 @@ void drawButton(
         h - 2,
         color
     );
-
-    // --------------------------------------------------------
-    // TEXTE
-    // --------------------------------------------------------
 
     tft.setTextFont(
         1
@@ -682,8 +648,10 @@ void drawButton(
     uint16_t textColor =
         COLOR_BUTTON_TEXT;
 
-    if (color == COLOR_BUTTON_OK ||
-        color == COLOR_FOOTER_MENU)
+    if (
+        color == COLOR_BUTTON_OK ||
+        color == COLOR_FOOTER_MENU
+    )
     {
         textColor =
             TFT_BLACK;
@@ -751,7 +719,10 @@ void setStatus(
     uint16_t color
 )
 {
-    if (index < 0 || index > 3)
+    if (
+        index < 0 ||
+        index > 3
+    )
     {
         return;
     }
