@@ -2,116 +2,123 @@
 #include "config.h"
 #include "display.h"
 
-#include <Arduino.h>
-
 // ============================================================
 // INITIALISATION
 // ============================================================
 
 void pMainInit()
 {
+    Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] pMainInit() START");
+
+    Serial.println("[PMAIN] Initialisation page MAIN");
+
     Serial.println("[PMAIN] pMainInit() END");
+    Serial.println("[PMAIN] ================================");
 }
 
 // ============================================================
-// AFFICHAGE MAIN
+// AFFICHAGE PAGE MAIN
 // ============================================================
 
 void pMainShow()
 {
-    Serial.println();
     Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] pMainShow() START");
-    Serial.println("[PMAIN] TEST TFT DIRECT");
-    Serial.println("[PMAIN] ================================");
 
-    // --------------------------------------------------------
-    // TEST 1 : ECRAN NOIR
-    // --------------------------------------------------------
+    Serial.println("[PMAIN] TEST 1 -> fond");
 
-    Serial.println("[PMAIN] TEST 1 -> fillScreen(BLACK)");
-
-    tft.fillScreen(TFT_BLACK);
+    tft.fillScreen(COLOR_BACKGROUND);
 
     Serial.println("[PMAIN] TEST 1 OK");
 
-    delay(500);
+    Serial.println("[PMAIN] TEST 2 -> titre");
 
-    // --------------------------------------------------------
-    // TEST 2 : RECTANGLE ROUGE
-    // --------------------------------------------------------
-
-    Serial.println("[PMAIN] TEST 2 -> rectangle ROUGE");
-
-    tft.fillRect(
-        0,
-        0,
-        240,
-        80,
-        TFT_RED
-    );
+    tft.setTextColor(COLOR_TITLE_TEXT, COLOR_BACKGROUND);
+    tft.setTextSize(2);
+    tft.setCursor(20, 55);
+    tft.print(HOME_TITLE);
 
     Serial.println("[PMAIN] TEST 2 OK");
 
-    delay(500);
-
-    // --------------------------------------------------------
-    // TEST 3 : RECTANGLE VERT
-    // --------------------------------------------------------
-
-    Serial.println("[PMAIN] TEST 3 -> rectangle VERT");
+    Serial.println("[PMAIN] TEST 3 -> bouton METEO");
 
     tft.fillRect(
-        0,
-        80,
-        240,
-        80,
-        TFT_GREEN
+        HOME_BUTTON_X,
+        HOME_BUTTON_METEO_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        HOME_BUTTON_BG
     );
+
+    tft.drawRect(
+        HOME_BUTTON_X,
+        HOME_BUTTON_METEO_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        HOME_BUTTON_BORDER
+    );
+
+    tft.setTextColor(
+        HOME_BUTTON_TEXT,
+        HOME_BUTTON_BG
+    );
+
+    tft.setTextSize(2);
+    tft.setCursor(
+        HOME_BUTTON_X + 55,
+        HOME_BUTTON_METEO_Y + 18
+    );
+
+    tft.print("METEO");
 
     Serial.println("[PMAIN] TEST 3 OK");
 
-    delay(500);
-
-    // --------------------------------------------------------
-    // TEST 4 : RECTANGLE BLEU
-    // --------------------------------------------------------
-
-    Serial.println("[PMAIN] TEST 4 -> rectangle BLEU");
+    Serial.println("[PMAIN] TEST 4 -> bouton WIFI");
 
     tft.fillRect(
-        0,
-        160,
-        240,
-        80,
-        TFT_BLUE
+        HOME_BUTTON_X,
+        HOME_BUTTON_WIFI_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        HOME_BUTTON_BG
     );
+
+    tft.drawRect(
+        HOME_BUTTON_X,
+        HOME_BUTTON_WIFI_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        HOME_BUTTON_BORDER
+    );
+
+    tft.setTextColor(
+        HOME_BUTTON_TEXT,
+        HOME_BUTTON_BG
+    );
+
+    tft.setTextSize(2);
+    tft.setCursor(
+        HOME_BUTTON_X + 65,
+        HOME_BUTTON_WIFI_Y + 18
+    );
+
+    tft.print("WIFI");
 
     Serial.println("[PMAIN] TEST 4 OK");
 
-    delay(500);
-
-    // --------------------------------------------------------
-    // TEST 5 : TEXTE
-    // --------------------------------------------------------
-
     Serial.println("[PMAIN] TEST 5 -> texte");
 
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.setTextDatum(MC_DATUM);
-
-    tft.drawString(
-        "3x0c3t TFT TEST",
-        120,
-        280
+    tft.setTextColor(
+        COLOR_TEXT,
+        COLOR_BACKGROUND
     );
 
-    Serial.println("[PMAIN] TEST 5 OK");
+    tft.setTextSize(1);
+    tft.setCursor(20, 220);
+    tft.print("3x0c3t TFT BASE");
 
-    // --------------------------------------------------------
-    // FIN
-    // --------------------------------------------------------
+    Serial.println("[PMAIN] TEST 5 OK");
 
     Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] pMainShow() END");
@@ -124,5 +131,46 @@ void pMainShow()
 
 void pMainUpdate()
 {
-    // Pas d'action pour le moment.
+    Serial.println("[PMAIN] pMainUpdate()");
+}
+
+// ============================================================
+// BOUTONS
+// ============================================================
+
+void pMainButtonUp()
+{
+    Serial.println("[PMAIN] BUTTON UP");
+}
+
+void pMainButtonDown()
+{
+    Serial.println("[PMAIN] BUTTON DOWN");
+}
+
+void pMainButtonLeft()
+{
+    Serial.println("[PMAIN] BUTTON LEFT");
+}
+
+void pMainButtonRight()
+{
+    Serial.println("[PMAIN] BUTTON RIGHT");
+}
+
+void pMainButtonOk()
+{
+    Serial.println("[PMAIN] BUTTON OK");
+
+    Serial.println("[PMAIN] -> bouton OK MAIN");
+}
+
+void pMainButtonCancel()
+{
+    Serial.println("[PMAIN] BUTTON CANCEL");
+}
+
+void pMainButtonMenu()
+{
+    Serial.println("[PMAIN] BUTTON MENU");
 }
