@@ -7,139 +7,162 @@
 // ECRAN
 // ============================================================
 
-#define SCREEN_WIDTH   240
-#define SCREEN_HEIGHT  320
+#define SCREEN_WIDTH  240
+#define SCREEN_HEIGHT 320
 
-#define TFT_ROTATION   2
-
+#define TFT_ROTATION 2
 
 // ============================================================
 // COULEURS GENERALES
 // ============================================================
 
-#define COLOR_BACKGROUND     TFT_BLACK
-#define COLOR_TEXT           TFT_WHITE
-#define COLOR_PRIMARY        TFT_CYAN
-#define COLOR_LINE           TFT_DARKGREY
-
-
-// ============================================================
-// COULEURS HEADER
-// ============================================================
-
-#define COLOR_HEADER_TIME    TFT_WHITE
-#define COLOR_HEADER_LINE    TFT_DARKGREY
-#define COLOR_HEADER_STATUS  TFT_DARKGREY
-#define COLOR_PROGRESS       TFT_CYAN
-
-
-// ============================================================
-// COULEURS TITRE
-// ============================================================
-
-#define COLOR_TITLE_TEXT     TFT_CYAN
-#define COLOR_TITLE_LINE     TFT_DARKGREY
-
-
-// ============================================================
-// COULEURS CONTENU
-// ============================================================
-
-#define COLOR_CONTENT_TEXT   TFT_WHITE
-#define COLOR_CONTENT_VALUE  TFT_CYAN
-#define COLOR_CONTENT_LINE   TFT_DARKGREY
-
-
-// ============================================================
-// COULEURS FOOTER
-// ============================================================
-
-#define COLOR_FOOTER_BG      TFT_BLACK
-#define COLOR_FOOTER_LINE    TFT_DARKGREY
-
-#define COLOR_BUTTON         TFT_DARKGREY
-#define COLOR_BUTTON_TEXT    TFT_WHITE
-
-#define COLOR_BUTTON_UP      TFT_DARKGREY
-#define COLOR_BUTTON_DOWN    TFT_DARKGREY
-#define COLOR_BUTTON_LEFT    TFT_DARKGREY
-#define COLOR_BUTTON_RIGHT   TFT_DARKGREY
-
-#define COLOR_BUTTON_MENU    TFT_DARKGREY
-#define COLOR_BUTTON_CANCEL  TFT_RED
-#define COLOR_BUTTON_OK      TFT_GREEN
-
-
-// ============================================================
-// COULEURS STATUT
-// ============================================================
-
-#define COLOR_OK             TFT_GREEN
-#define COLOR_ERROR          TFT_RED
-#define COLOR_WARNING        TFT_YELLOW
-
+#define COLOR_BACKGROUND   TFT_BLACK
+#define COLOR_TEXT         TFT_WHITE
+#define COLOR_PRIMARY      TFT_CYAN
+#define COLOR_LINE         TFT_DARKGREY
 
 // ============================================================
 // HEADER
 // ============================================================
 
-// Heure
-#define HEADER_TIME_X        2
-#define HEADER_TIME_Y        0
-
-// Première ligne
-#define HEADER_LINE_1_Y      10
+// Ligne supérieure
+#define HEADER_LINE_1_Y    10
 
 // Barre de progression
-// IMPORTANT : hauteur exactement 1 pixel
-#define PROGRESS_Y           11
-#define PROGRESS_HEIGHT      1
+// EXACTEMENT 1 PIXEL DE HAUTEUR
+#define PROGRESS_Y         19
+#define PROGRESS_HEIGHT    1
 
-// Deuxième ligne
-#define HEADER_LINE_2_Y      12
+// Ligne inférieure
+#define HEADER_LINE_2_Y    12
 
+// Position heure
+#define HEADER_TIME_X      2
+#define HEADER_TIME_Y      0
+
+// ============================================================
+// COULEURS HEADER
+// ============================================================
+
+#define COLOR_HEADER_TIME      COLOR_TEXT
+#define COLOR_HEADER_STATUS    COLOR_PRIMARY
+#define COLOR_HEADER_LINE      COLOR_LINE
+#define COLOR_PROGRESS         COLOR_PRIMARY
 
 // ============================================================
 // TITRE
 // ============================================================
 
-// On gagne quelques pixels en remontant le titre
-#define TITLE_Y              13
-#define TITLE_HEIGHT         17
-#define TITLE_LINE_Y         29
+#define TITLE_Y          13
+#define TITLE_HEIGHT     20
+#define TITLE_LINE_Y     30
 
+#define COLOR_TITLE_TEXT      COLOR_PRIMARY
+#define COLOR_TITLE_LINE      COLOR_LINE
 
 // ============================================================
 // CONTENU
 // ============================================================
 
-#define CONTENT_Y            31
-#define CONTENT_HEIGHT       228
-
+#define CONTENT_Y        47
+#define CONTENT_HEIGHT   218
 
 // ============================================================
 // FOOTER
 // ============================================================
 
-#define FOOTER_HEIGHT        30
-#define FOOTER_Y             (SCREEN_HEIGHT - FOOTER_HEIGHT)
+#define FOOTER_HEIGHT    30
+#define FOOTER_Y         (SCREEN_HEIGHT - FOOTER_HEIGHT)
 
+// ============================================================
+// COULEURS FOOTER
+// ============================================================
+
+#define COLOR_FOOTER_BG       COLOR_BACKGROUND
+#define COLOR_FOOTER_LINE     COLOR_LINE
+
+// ============================================================
+// BOUTONS
+// ============================================================
+
+// Couleur générale
+#define COLOR_BUTTON          TFT_DARKGREY
+#define COLOR_BUTTON_TEXT     TFT_WHITE
+
+// Flèches
+#define COLOR_BUTTON_UP       TFT_DARKGREY
+#define COLOR_BUTTON_DOWN     TFT_DARKGREY
+#define COLOR_BUTTON_LEFT     TFT_DARKGREY
+#define COLOR_BUTTON_RIGHT    TFT_DARKGREY
+
+// Menu
+#define COLOR_BUTTON_MENU     TFT_BLUE
+
+// Annuler
+#define COLOR_BUTTON_CANCEL   TFT_RED
+
+// Valider
+#define COLOR_BUTTON_OK       TFT_GREEN
+
+// ============================================================
+// ETATS
+// ============================================================
+
+#define COLOR_OK              TFT_GREEN
+#define COLOR_ERROR           TFT_RED
+#define COLOR_WARNING         TFT_YELLOW
 
 // ============================================================
 // WIFI
 // ============================================================
 
-#define WIFI_CONNECT_TIMEOUT 15000UL
-#define WIFI_RETRY_INTERVAL  10000UL
-
+#define WIFI_CONNECT_TIMEOUT  15000
+#define WIFI_RETRY_INTERVAL   10000
 
 // ============================================================
 // METEO
 // ============================================================
 
-#define WEATHER_CITY          "Lille"
-#define WEATHER_COUNTRY       "FR"
+#define WEATHER_CITY            "Lille"
+#define WEATHER_COUNTRY         "FR"
 
-#define WEATHER_REFRESH_TIME  600000UL
+#define WEATHER_REFRESH_TIME    600000UL
+
+// ============================================================
+// SPLASH SCREEN
+// ============================================================
+
+// Fond
+#define SPLASH_BACKGROUND          COLOR_BACKGROUND
+
+// Texte principal
+#define SPLASH_TITLE               "3x0c3t"
+#define SPLASH_TITLE_COLOR         COLOR_PRIMARY
+#define SPLASH_TITLE_Y             105
+
+// Sous-titre
+#define SPLASH_SUBTITLE            "TFT BASE"
+#define SPLASH_SUBTITLE_COLOR      COLOR_TEXT
+#define SPLASH_SUBTITLE_Y          145
+
+// Version
+#define SPLASH_VERSION             "V1.0"
+#define SPLASH_VERSION_COLOR       COLOR_TEXT
+#define SPLASH_VERSION_Y           175
+
+// Barre de progression du splash
+#define SPLASH_PROGRESS_X          30
+#define SPLASH_PROGRESS_Y          220
+#define SPLASH_PROGRESS_WIDTH      180
+#define SPLASH_PROGRESS_HEIGHT     4
+
+#define SPLASH_PROGRESS_BORDER     COLOR_LINE
+#define SPLASH_PROGRESS_COLOR      COLOR_PRIMARY
+
+// Durée totale du splash
+#define SPLASH_DURATION             2000UL
+
+// Fréquence de mise à jour
+#define SPLASH_UPDATE_INTERVAL      20UL
 
 #endif
