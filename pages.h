@@ -4,16 +4,15 @@
 #include <Arduino.h>
 
 // ============================================================
-// IDENTIFIANTS DES PAGES
+// PAGES
 // ============================================================
 
 enum PageID
 {
-    PAGE_HOME = 0,
+    PAGE_MAIN = 0,
     PAGE_METEO,
     PAGE_SETTINGS,
     PAGE_SYSTEM,
-
     PAGE_COUNT
 };
 
@@ -30,21 +29,33 @@ void pagesInit();
 void pagesShow(PageID page);
 
 // ============================================================
-// NAVIGATION
-// ============================================================
-
-void pagesNext();
-
-void pagesPrevious();
-
-void pagesGoHome();
-
-void pagesGoSettings();
-
-// ============================================================
 // PAGE COURANTE
 // ============================================================
 
 PageID pagesGetCurrent();
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+
+void pagesNext();
+void pagesPrevious();
+
+void pagesGoMain();
+void pagesGoMeteo();
+void pagesGoSettings();
+void pagesGoSystem();
+
+// ============================================================
+// BOUTONS
+// ============================================================
+
+void pagesButtonUp();
+void pagesButtonDown();
+void pagesButtonLeft();
+void pagesButtonRight();
+void pagesButtonMenu();
+void pagesButtonOk();
+void pagesButtonCancel();
 
 #endif
