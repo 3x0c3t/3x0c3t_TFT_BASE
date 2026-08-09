@@ -1,5 +1,6 @@
 #include "wifi.h"
 
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <time.h>
 
@@ -11,36 +12,12 @@
 // ETAT WIFI
 // ============================================================
 
-static bool wifiConnectedState = false;
+bool wifiConnected = false;
 
 static unsigned long lastWifiAttempt = 0;
 
 // ============================================================
-// WIFI ACTUEL
-// ============================================================
-
-static const char* getWifiSSID()
-{
-    if (strlen(WIFI1_SSID) > 0)
-    {
-        return WIFI1_SSID;
-    }
-
-    return WIFI2_SSID;
-}
-
-static const char* getWifiPassword()
-{
-    if (strlen(WIFI1_SSID) > 0)
-    {
-        return WIFI1_PASSWORD;
-    }
-
-    return WIFI2_PASSWORD;
-}
-
-// ============================================================
-// INITIALISATION
+// INITIALISATION WIFI
 // ============================================================
 
 void wifiInit()
@@ -50,38 +27,42 @@ void wifiInit()
     Serial.println("[WIFI] INITIALISATION");
     Serial.println("================================");
 
+    // --------------------------------------------------------
+    // Statut WiFi
+    // Carré 0 = WiFi
+    // --------------------------------------------------------
+
     setStatus(
-        "W",
+        0,
         COLOR_ERROR
     );
 
-    const char* ssid =
-        getWifiSSID();
-
-    const char* password =
-        getWifiPassword();
+    // --------------------------------------------------------
+    // Vérification configuration
+    // --------------------------------------------------------
 
     if (
-        ssid == nullptr ||
-        strlen(ssid) == 0
+        strlen(WIFI1_SSID) == 0 ||
+        strlen(WIFI1_PASSWORD) == 0
     )
     {
         Serial.println(
-            "[WIFI] Aucun SSID configure"
+            "[WIFI] SSID ou mot de passe non configure"
         );
 
-        wifiConnectedState = false;
+        wifiConnected = false;
+
+        setStatus(
+            0,
+            COLOR_ERROR
+        );
 
         return;
     }
 
-    Serial.print(
-        "[WIFI] Connexion a : "
-    );
-
-    Serial.println(
-        ssid
-    );
+    // --------------------------------------------------------
+    // Configuration ESP8266
+    // --------------------------------------------------------
 
     WiFi.mode(
         WIFI_STA
@@ -95,9 +76,21 @@ void wifiInit()
         false
     );
 
+    // --------------------------------------------------------
+    // Connexion
+    // --------------------------------------------------------
+
+    Serial.print(
+        "[WIFI] Connexion a : "
+    );
+
+    Serial.println(
+        WIFI1_SSID
+    );
+
     WiFi.begin(
-        ssid,
-        password
+        WIFI1_SSID,
+        WIFI1_PASSWORD
     );
 
     unsigned long start =
@@ -115,12 +108,15 @@ void wifiInit()
 
     Serial.println();
 
+    // --------------------------------------------------------
+    // Connexion réussie
+    // --------------------------------------------------------
+
     if (
-        WiFi.status() ==
-        WL_CONNECTED
+        WiFi.status() == WL_CONNECTED
     )
     {
-        wifiConnectedState = true;
+        wifiConnected = true;
 
         Serial.println(
             "[WIFI] CONNECTE"
@@ -134,39 +130,68 @@ void wifiInit()
             WiFi.localIP()
         );
 
-        setStatus(
-            "W",
-            COLOR_OK
+        Serial.print(
+            "[WIFI] RSSI : "
+        );
+
+        Serial.print(
+            WiFi.RSSI()
         );
 
         Serial.println(
-            "[CLOCK] Synchronisation NTP..."
+            " dBm"
         );
 
+        setStatus(
+            0,
+            COLOR_OK
+        );
+
+        // ----------------------------------------------------
+        // Synchronisation NTP
+        // ----------------------------------------------------
+
         configTime(
-            CLOCK_GMT_OFFSET,
-            CLOCK_DAYLIGHT_OFFSET,
-            CLOCK_NTP_SERVER_1,
-            CLOCK_NTP_SERVER_2
+            3600,
+            3600,
+            "pool.ntp.org",
+            "time.nist.gov"
+        );
+
+        Serial.println(
+            "[TIME] Synchronisation NTP demandee"
         );
     }
+
+    // --------------------------------------------------------
+    // Échec
+    // --------------------------------------------------------
+
     else
     {
-        wifiConnectedState = false;
+        wifiConnected = false;
 
         Serial.println(
             "[WIFI] ECHEC CONNEXION"
         );
 
+        Serial.print(
+            "[WIFI] Etat : "
+        );
+
+        Serial.println(
+            WiFi.status()
+        );
+
         setStatus(
-            "W",
+            0,
             COLOR_ERROR
         );
     }
 }
 
 // ============================================================
-// MISE A JOUR
+// MISE A JOUR WIFI
 // ============================================================
 
 void wifiUpdate()
@@ -174,13 +199,17 @@ void wifiUpdate()
     wl_status_t status =
         WiFi.status();
 
+    // ========================================================
+    // CONNECTE
+    // ========================================================
+
     if (
         status == WL_CONNECTED
     )
     {
-        if (!wifiConnectedState)
+        if (!wifiConnected)
         {
-            wifiConnectedState = true;
+            wifiConnected = true;
 
             Serial.println(
                 "[WIFI] CONNEXION RETABLIE"
@@ -194,35 +223,51 @@ void wifiUpdate()
                 WiFi.localIP()
             );
 
+            // ------------------------------------------------
+            // Relance synchronisation NTP
+            // ------------------------------------------------
+
             configTime(
-                CLOCK_GMT_OFFSET,
-                CLOCK_DAYLIGHT_OFFSET,
-                CLOCK_NTP_SERVER_1,
-                CLOCK_NTP_SERVER_2
+                3600,
+                3600,
+                "pool.ntp.org",
+                "time.nist.gov"
+            );
+
+            Serial.println(
+                "[TIME] Synchronisation NTP relancee"
             );
         }
 
         setStatus(
-            "W",
+            0,
             COLOR_OK
         );
 
         return;
     }
 
-    if (wifiConnectedState)
+    // ========================================================
+    // CONNEXION PERDUE
+    // ========================================================
+
+    if (wifiConnected)
     {
-        wifiConnectedState = false;
+        wifiConnected = false;
 
         Serial.println(
             "[WIFI] CONNEXION PERDUE"
         );
 
         setStatus(
-            "W",
+            0,
             COLOR_ERROR
         );
     }
+
+    // ========================================================
+    // VERIFICATION INTERVALLE
+    // ========================================================
 
     if (
         millis() - lastWifiAttempt <
@@ -235,26 +280,38 @@ void wifiUpdate()
     lastWifiAttempt =
         millis();
 
-    const char* ssid =
-        getWifiSSID();
-
-    const char* password =
-        getWifiPassword();
+    // ========================================================
+    // VERIFICATION CONFIGURATION
+    // ========================================================
 
     if (
-        ssid == nullptr ||
-        strlen(ssid) == 0
+        strlen(WIFI1_SSID) == 0 ||
+        strlen(WIFI1_PASSWORD) == 0
     )
     {
         Serial.println(
-            "[WIFI] Aucun SSID configure"
+            "[WIFI] Configuration absente"
+        );
+
+        setStatus(
+            0,
+            COLOR_ERROR
         );
 
         return;
     }
 
+    // ========================================================
+    // NOUVELLE TENTATIVE
+    // ========================================================
+
     Serial.println(
         "[WIFI] Nouvelle tentative..."
+    );
+
+    setStatus(
+        0,
+        COLOR_WARNING
     );
 
     WiFi.disconnect();
@@ -262,19 +319,18 @@ void wifiUpdate()
     delay(100);
 
     WiFi.begin(
-        ssid,
-        password
+        WIFI1_SSID,
+        WIFI1_PASSWORD
     );
 }
 
 // ============================================================
-// ETAT
+// ETAT WIFI
 // ============================================================
 
 bool wifiIsConnected()
 {
     return (
-        WiFi.status() ==
-        WL_CONNECTED
+        WiFi.status() == WL_CONNECTED
     );
 }

@@ -38,10 +38,10 @@
 #define TITLE_LINE_Y  47
 
 #define CONTENT_Y       48
-#define CONTENT_HEIGHT  225
+#define CONTENT_HEIGHT  242
 
-#define FOOTER_Y       273
-#define FOOTER_HEIGHT  47
+#define FOOTER_Y       291
+#define FOOTER_HEIGHT  20
 
 // ============================================================
 // WIFI

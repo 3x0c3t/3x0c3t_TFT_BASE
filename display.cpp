@@ -1,5 +1,8 @@
 #include "display.h"
-#include "clock.h"
+
+#include <time.h>
+
+#include "config.h"
 
 // ============================================================
 // TFT
@@ -8,27 +11,21 @@
 TFT_eSPI tft = TFT_eSPI();
 
 // ============================================================
-// ETATS
+// ETAT
 // ============================================================
 
-struct StatusItem
+static uint16_t statusColors[4] =
 {
-    String label;
-    uint16_t color;
+    COLOR_LINE,
+    COLOR_LINE,
+    COLOR_LINE,
+    COLOR_LINE
 };
-
-static StatusItem statusItems[8];
-
-static uint8_t statusCount = 0;
-
-// ============================================================
-// PROGRESSION
-// ============================================================
 
 static uint8_t progressValue = 0;
 
 // ============================================================
-// PROTOTYPE INTERNE
+// FONCTION INTERNE
 // ============================================================
 
 static void drawArrow(
@@ -56,11 +53,13 @@ void displayInit()
 
     tft.setTextWrap(false);
 
-    drawInterface("SYSTEME");
+    drawInterface(
+        "SYSTEME"
+    );
 }
 
 // ============================================================
-// INTERFACE
+// INTERFACE COMPLETE
 // ============================================================
 
 void drawInterface(
@@ -73,7 +72,9 @@ void drawInterface(
 
     drawHeader();
 
-    drawTitle(title);
+    drawTitle(
+        title
+    );
 
     clearContent();
 
@@ -108,12 +109,13 @@ void drawHeader()
 }
 
 // ============================================================
-// HEURE / DATE
+// HEURE
 // ============================================================
 
 void drawHeaderTime()
 {
-    time_t now = time(nullptr);
+    time_t now =
+        time(nullptr);
 
     struct tm* timeinfo =
         localtime(&now);
@@ -144,6 +146,7 @@ void drawHeaderTime()
     }
 
     tft.setTextFont(1);
+
     tft.setTextSize(1);
 
     tft.setTextDatum(
@@ -163,29 +166,26 @@ void drawHeaderTime()
 }
 
 // ============================================================
-// CARRES D'ETAT
+// CARRES DE STATUT
 // ============================================================
 
 void drawStatusSquares()
 {
     const int squareSize = 7;
-    const int spacing = 3;
+    const int spacing = 2;
 
-    int totalWidth = 0;
+    const int totalWidth =
+        (squareSize * 4) +
+        (spacing * 3);
 
-    if (statusCount > 0)
-    {
-        totalWidth =
-            statusCount * squareSize +
-            (statusCount - 1) * spacing;
-    }
-
-    int startX =
+    const int startX =
         SCREEN_WIDTH -
         totalWidth -
         2;
 
-    for (uint8_t i = 0; i < statusCount; i++)
+    const int y = 0;
+
+    for (int i = 0; i < 4; i++)
     {
         int x =
             startX +
@@ -193,116 +193,12 @@ void drawStatusSquares()
 
         tft.fillRect(
             x,
-            0,
+            y,
             squareSize,
             squareSize,
-            statusItems[i].color
-        );
-
-        tft.setTextFont(1);
-        tft.setTextSize(1);
-        tft.setTextDatum(
-            TR_DATUM
-        );
-
-        tft.setTextColor(
-            statusItems[i].color,
-            COLOR_BACKGROUND
-        );
-
-        tft.drawString(
-            statusItems[i].label,
-            x - 2,
-            0
+            statusColors[i]
         );
     }
-}
-
-// ============================================================
-// AJOUT ETAT
-// ============================================================
-
-void addStatus(
-    const String& label,
-    uint16_t color
-)
-{
-    if (statusCount >= 8)
-    {
-        return;
-    }
-
-    statusItems[statusCount].label = label;
-    statusItems[statusCount].color = color;
-
-    statusCount++;
-
-    drawStatusSquares();
-}
-
-// ============================================================
-// MODIFICATION ETAT
-// ============================================================
-
-void setStatus(
-    const String& label,
-    uint16_t color
-)
-{
-    for (uint8_t i = 0; i < statusCount; i++)
-    {
-        if (statusItems[i].label == label)
-        {
-            statusItems[i].color = color;
-
-            drawStatusSquares();
-
-            return;
-        }
-    }
-
-    addStatus(
-        label,
-        color
-    );
-}
-
-// ============================================================
-// SUPPRESSION ETAT
-// ============================================================
-
-void removeStatus(
-    const String& label
-)
-{
-    for (uint8_t i = 0; i < statusCount; i++)
-    {
-        if (statusItems[i].label == label)
-        {
-            for (uint8_t j = i; j < statusCount - 1; j++)
-            {
-                statusItems[j] =
-                    statusItems[j + 1];
-            }
-
-            statusCount--;
-
-            drawHeader();
-
-            return;
-        }
-    }
-}
-
-// ============================================================
-// SUPPRESSION TOUS ETATS
-// ============================================================
-
-void clearStatus()
-{
-    statusCount = 0;
-
-    drawStatusSquares();
 }
 
 // ============================================================
@@ -351,7 +247,8 @@ void setProgress(
         percent = 100;
     }
 
-    progressValue = percent;
+    progressValue =
+        percent;
 
     drawProgressBar();
 }
@@ -373,6 +270,7 @@ void drawTitle(
     );
 
     tft.setTextFont(2);
+
     tft.setTextSize(1);
 
     tft.setTextDatum(
@@ -414,13 +312,16 @@ void clearContent()
 }
 
 // ============================================================
-// FOOTER
+// FOOTER COMPACT
 // ============================================================
 
 void drawFooter()
 {
-    const int y = FOOTER_Y;
-    const int height = FOOTER_HEIGHT;
+    const int y =
+        FOOTER_Y;
+
+    const int height =
+        FOOTER_HEIGHT;
 
     tft.fillRect(
         0,
@@ -440,70 +341,149 @@ void drawFooter()
     const int buttonCount = 7;
 
     const int baseWidth =
-        SCREEN_WIDTH / buttonCount;
+        SCREEN_WIDTH /
+        buttonCount;
 
     const int remainder =
-        SCREEN_WIDTH % buttonCount;
+        SCREEN_WIDTH %
+        buttonCount;
 
     int x = 0;
 
-    for (int i = 0; i < buttonCount; i++)
-    {
-        int w =
-            baseWidth +
-            (i < remainder ? 1 : 0);
+    // ========================================================
+    // FLECHE HAUT
+    // ========================================================
 
-        if (i < 4)
-        {
-            drawArrow(
-                x + w / 2,
-                y + height / 2,
-                w,
-                height,
-                i,
-                COLOR_BUTTON
-            );
-        }
-        else if (i == 4)
-        {
-            drawButton(
-                x,
-                y + 1,
-                w,
-                height - 1,
-                "¤",
-                COLOR_BUTTON
-            );
-        }
-        else if (i == 5)
-        {
-            drawButton(
-                x,
-                y + 1,
-                w,
-                height - 1,
-                "X",
-                COLOR_ERROR
-            );
-        }
-        else
-        {
-            drawButton(
-                x,
-                y + 1,
-                w,
-                height - 1,
-                "V",
-                COLOR_OK
-            );
-        }
+    int w =
+        baseWidth +
+        (0 < remainder ? 1 : 0);
 
-        x += w;
-    }
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        0,
+        COLOR_BUTTON
+    );
+
+    x += w;
+
+    // ========================================================
+    // FLECHE BAS
+    // ========================================================
+
+    w =
+        baseWidth +
+        (1 < remainder ? 1 : 0);
+
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        1,
+        COLOR_BUTTON
+    );
+
+    x += w;
+
+    // ========================================================
+    // FLECHE GAUCHE
+    // ========================================================
+
+    w =
+        baseWidth +
+        (2 < remainder ? 1 : 0);
+
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        2,
+        COLOR_BUTTON
+    );
+
+    x += w;
+
+    // ========================================================
+    // FLECHE DROITE
+    // ========================================================
+
+    w =
+        baseWidth +
+        (3 < remainder ? 1 : 0);
+
+    drawArrow(
+        x + w / 2,
+        y + height / 2,
+        w,
+        height,
+        3,
+        COLOR_BUTTON
+    );
+
+    x += w;
+
+    // ========================================================
+    // MENU
+    // ========================================================
+
+    w =
+        baseWidth +
+        (4 < remainder ? 1 : 0);
+
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "M",
+        COLOR_BUTTON
+    );
+
+    x += w;
+
+    // ========================================================
+    // ANNULER
+    // ========================================================
+
+    w =
+        baseWidth +
+        (5 < remainder ? 1 : 0);
+
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "X",
+        COLOR_ERROR
+    );
+
+    x += w;
+
+    // ========================================================
+    // VALIDER
+    // ========================================================
+
+    w =
+        SCREEN_WIDTH -
+        x;
+
+    drawButton(
+        x,
+        y + 1,
+        w,
+        height - 1,
+        "V",
+        COLOR_OK
+    );
 }
 
 // ============================================================
-// FLECHE
+// FLECHES
 // ============================================================
 
 static void drawArrow(
@@ -515,8 +495,6 @@ static void drawArrow(
     uint16_t color
 )
 {
-    int margin = 3;
-
     int left =
         centerX -
         w / 2;
@@ -541,85 +519,104 @@ static void drawArrow(
         COLOR_LINE
     );
 
-    int shaft = 4;
-    int head = 6;
+    const int shaft = 3;
+    const int head = 5;
+
+    // ========================================================
+    // HAUT
+    // ========================================================
 
     if (direction == 0)
     {
         tft.fillRect(
             centerX - shaft / 2,
-            centerY - head,
+            centerY - 1,
             shaft,
-            head + 7,
+            7,
             color
         );
 
         tft.fillTriangle(
             centerX,
-            top + margin + 2,
+            top + 3,
             centerX - head,
-            top + margin + 8,
+            top + 9,
             centerX + head,
-            top + margin + 8,
+            top + 9,
             color
         );
     }
+
+    // ========================================================
+    // BAS
+    // ========================================================
+
     else if (direction == 1)
     {
         tft.fillRect(
             centerX - shaft / 2,
-            centerY - 7,
+            centerY - 6,
             shaft,
-            head + 7,
+            7,
             color
         );
 
         tft.fillTriangle(
             centerX,
-            bottom - margin - 2,
+            bottom - 3,
             centerX - head,
-            bottom - margin - 8,
+            bottom - 9,
             centerX + head,
-            bottom - margin - 8,
+            bottom - 9,
             color
         );
     }
+
+    // ========================================================
+    // GAUCHE
+    // ========================================================
+
     else if (direction == 2)
     {
         tft.fillRect(
-            centerX - head,
+            centerX - 1,
             centerY - shaft / 2,
-            head + 7,
+            7,
             shaft,
             color
         );
 
         tft.fillTriangle(
-            left + margin + 2,
+            left + 3,
             centerY,
-            left + margin + 8,
+            left + 9,
             centerY - head,
-            left + margin + 8,
+            left + 9,
             centerY + head,
             color
         );
     }
+
+    // ========================================================
+    // DROITE
+    // ========================================================
+
     else
     {
         tft.fillRect(
-            centerX - 7,
+            centerX - 6,
             centerY - shaft / 2,
-            head + 7,
+            7,
             shaft,
             color
         );
 
         tft.fillTriangle(
-            right - margin - 2,
+            right - 3,
             centerY,
-            right - margin - 8,
+            right - 9,
             centerY - head,
-            right - margin - 8,
+            right - 9,
             centerY + head,
             color
         );
@@ -661,6 +658,7 @@ void drawButton(
     );
 
     tft.setTextFont(1);
+
     tft.setTextSize(1);
 
     tft.setTextDatum(
@@ -672,7 +670,8 @@ void drawButton(
 
     if (color == COLOR_OK)
     {
-        textColor = TFT_BLACK;
+        textColor =
+            TFT_BLACK;
     }
 
     tft.setTextColor(
@@ -699,7 +698,10 @@ void centerText(
 )
 {
     tft.setTextFont(1);
-    tft.setTextSize(size);
+
+    tft.setTextSize(
+        size
+    );
 
     tft.setTextDatum(
         TC_DATUM
@@ -715,4 +717,24 @@ void centerText(
         SCREEN_WIDTH / 2,
         y
     );
+}
+
+// ============================================================
+// STATUT
+// ============================================================
+
+void setStatus(
+    int index,
+    uint16_t color
+)
+{
+    if (index < 0 || index > 3)
+    {
+        return;
+    }
+
+    statusColors[index] =
+        color;
+
+    drawStatusSquares();
 }
