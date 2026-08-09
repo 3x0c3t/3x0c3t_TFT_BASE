@@ -9,16 +9,22 @@
 TFT_eSPI tft = TFT_eSPI();
 
 // ============================================================
-// ETATS
+// STRUCTURE INDICATEUR
 // ============================================================
 
-static uint16_t statusColors[4] =
+struct StatusItem
 {
-    COLOR_LINE,
-    COLOR_LINE,
-    COLOR_LINE,
-    COLOR_LINE
+    bool used;
+    bool enabled;
+    String label;
+    uint16_t color;
 };
+
+// ============================================================
+// TABLEAU DES INDICATEURS
+// ============================================================
+
+static StatusItem statusItems[STATUS_MAX];
 
 // ============================================================
 // PROGRESSION
@@ -27,7 +33,7 @@ static uint16_t statusColors[4] =
 static uint8_t progressValue = 0;
 
 // ============================================================
-// DECLARATIONS INTERNES
+// DECLARATION INTERNE
 // ============================================================
 
 static void drawArrow(
@@ -46,15 +52,23 @@ void displayInit()
 {
     tft.init();
 
-    tft.setRotation(TFT_ROTATION);
+    tft.setRotation(
+        TFT_ROTATION
+    );
 
     tft.fillScreen(
         COLOR_BACKGROUND
     );
 
-    tft.setTextWrap(false);
+    tft.setTextWrap(
+        false
+    );
 
-    drawInterface("SYSTEME");
+    clearStatus();
+
+    drawInterface(
+        "SYSTEME"
+    );
 }
 
 // ============================================================
@@ -71,7 +85,9 @@ void drawInterface(
 
     drawHeader();
 
-    drawTitle(title);
+    drawTitle(
+        title
+    );
 
     clearContent();
 
@@ -90,7 +106,7 @@ void drawHeader()
 
     drawProgressBar();
 
-    // Ligne 1
+    // Ligne supérieure
 
     tft.drawFastHLine(
         0,
@@ -99,7 +115,7 @@ void drawHeader()
         COLOR_LINE
     );
 
-    // Ligne 2
+    // Ligne inférieure
 
     tft.drawFastHLine(
         0,
@@ -115,7 +131,8 @@ void drawHeader()
 
 void drawHeaderTime()
 {
-    time_t now = time(nullptr);
+    time_t now =
+        time(nullptr);
 
     struct tm* timeinfo =
         localtime(&now);
@@ -145,8 +162,13 @@ void drawHeaderTime()
         );
     }
 
-    tft.setTextFont(1);
-    tft.setTextSize(1);
+    tft.setTextFont(
+        1
+    );
+
+    tft.setTextSize(
+        1
+    );
 
     tft.setTextDatum(
         TL_DATUM
@@ -165,7 +187,7 @@ void drawHeaderTime()
 }
 
 // ============================================================
-// CARRES D'ETAT
+// INDICATEURS
 // ============================================================
 
 void drawStatusSquares()
@@ -173,31 +195,316 @@ void drawStatusSquares()
     const int squareSize = 7;
     const int spacing = 2;
 
-    const int totalWidth =
-        (squareSize * 4) +
-        (spacing * 3);
+    // --------------------------------------------------------
+    // Compter les indicateurs actifs
+    // --------------------------------------------------------
 
-    const int startX =
+    int count = 0;
+
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].enabled
+        )
+        {
+            count++;
+        }
+    }
+
+    // --------------------------------------------------------
+    // Largeur totale
+    // --------------------------------------------------------
+
+    int totalWidth = 0;
+
+    if (count > 0)
+    {
+        totalWidth =
+            (count * squareSize) +
+            ((count - 1) * spacing);
+    }
+
+    int startX =
         SCREEN_WIDTH -
         totalWidth -
         2;
 
-    const int y = 0;
+    // --------------------------------------------------------
+    // Nettoyer la zone
+    // --------------------------------------------------------
 
-    for (int i = 0; i < 4; i++)
+    tft.fillRect(
+        SCREEN_WIDTH - 80,
+        0,
+        80,
+        8,
+        COLOR_BACKGROUND
+    );
+
+    // --------------------------------------------------------
+    // Dessiner les indicateurs
+    // --------------------------------------------------------
+
+    int x = startX;
+
+    for (int i = 0; i < STATUS_MAX; i++)
     {
-        int x =
-            startX +
-            i * (squareSize + spacing);
+        if (
+            !statusItems[i].used ||
+            !statusItems[i].enabled
+        )
+        {
+            continue;
+        }
+
+        // Carré
 
         tft.fillRect(
             x,
-            y,
+            0,
             squareSize,
             squareSize,
-            statusColors[i]
+            statusItems[i].color
         );
+
+        // Lettre
+
+        tft.setTextFont(
+            1
+        );
+
+        tft.setTextSize(
+            1
+        );
+
+        tft.setTextDatum(
+            MC_DATUM
+        );
+
+        tft.setTextColor(
+            COLOR_BACKGROUND,
+            statusItems[i].color
+        );
+
+        tft.drawString(
+            statusItems[i].label,
+            x + squareSize / 2,
+            3
+        );
+
+        x +=
+            squareSize +
+            spacing;
     }
+}
+
+// ============================================================
+// AJOUTER UN INDICATEUR
+// ============================================================
+
+bool addStatus(
+    const String& label,
+    uint16_t color
+)
+{
+    if (label.length() == 0)
+    {
+        return false;
+    }
+
+    // --------------------------------------------------------
+    // Chercher s'il existe déjà
+    // --------------------------------------------------------
+
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].color =
+                color;
+
+            statusItems[i].enabled =
+                true;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    // --------------------------------------------------------
+    // Chercher une place libre
+    // --------------------------------------------------------
+
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (!statusItems[i].used)
+        {
+            statusItems[i].used =
+                true;
+
+            statusItems[i].enabled =
+                true;
+
+            statusItems[i].label =
+                label;
+
+            statusItems[i].color =
+                color;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ============================================================
+// SUPPRIMER UN INDICATEUR
+// ============================================================
+
+bool removeStatus(
+    const String& label
+)
+{
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].used =
+                false;
+
+            statusItems[i].enabled =
+                false;
+
+            statusItems[i].label =
+                "";
+
+            statusItems[i].color =
+                COLOR_LINE;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ============================================================
+// MODIFIER LA COULEUR
+// ============================================================
+
+bool setStatus(
+    const String& label,
+    uint16_t color
+)
+{
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].color =
+                color;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ============================================================
+// ACTIVER
+// ============================================================
+
+bool enableStatus(
+    const String& label
+)
+{
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].enabled =
+                true;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ============================================================
+// DESACTIVER
+// ============================================================
+
+bool disableStatus(
+    const String& label
+)
+{
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        if (
+            statusItems[i].used &&
+            statusItems[i].label == label
+        )
+        {
+            statusItems[i].enabled =
+                false;
+
+            drawStatusSquares();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// ============================================================
+// EFFACER TOUS LES INDICATEURS
+// ============================================================
+
+void clearStatus()
+{
+    for (int i = 0; i < STATUS_MAX; i++)
+    {
+        statusItems[i].used =
+            false;
+
+        statusItems[i].enabled =
+            false;
+
+        statusItems[i].label =
+            "";
+
+        statusItems[i].color =
+            COLOR_LINE;
+    }
+
+    drawStatusSquares();
 }
 
 // ============================================================
@@ -246,7 +553,8 @@ void setProgress(
         percent = 100;
     }
 
-    progressValue = percent;
+    progressValue =
+        percent;
 
     drawProgressBar();
 }
@@ -267,8 +575,13 @@ void drawTitle(
         COLOR_BACKGROUND
     );
 
-    tft.setTextFont(2);
-    tft.setTextSize(1);
+    tft.setTextFont(
+        2
+    );
+
+    tft.setTextSize(
+        1
+    );
 
     tft.setTextDatum(
         TC_DATUM
@@ -314,10 +627,11 @@ void clearContent()
 
 void drawFooter()
 {
-    const int y = FOOTER_Y;
-    const int height = FOOTER_HEIGHT;
+    const int y =
+        FOOTER_Y;
 
-    // Fond
+    const int height =
+        FOOTER_HEIGHT;
 
     tft.fillRect(
         0,
@@ -327,8 +641,6 @@ void drawFooter()
         COLOR_BACKGROUND
     );
 
-    // Ligne supérieure
-
     tft.drawFastHLine(
         0,
         y,
@@ -336,20 +648,15 @@ void drawFooter()
         COLOR_LINE
     );
 
-    // ========================================================
-    // 6 BOUTONS
-    //
-    //     HAUT | BAS | GAUCHE | DROITE | X | V
-    //
-    // ========================================================
-
     const int buttonCount = 6;
 
     const int baseWidth =
-        SCREEN_WIDTH / buttonCount;
+        SCREEN_WIDTH /
+        buttonCount;
 
     const int remainder =
-        SCREEN_WIDTH % buttonCount;
+        SCREEN_WIDTH %
+        buttonCount;
 
     int x = 0;
 
@@ -374,8 +681,6 @@ void drawFooter()
                 COLOR_OK;
         }
 
-        // Bordure
-
         tft.drawRect(
             x,
             y + 1,
@@ -383,8 +688,6 @@ void drawFooter()
             height - 1,
             COLOR_LINE
         );
-
-        // Fond
 
         tft.fillRect(
             x + 1,
@@ -395,14 +698,10 @@ void drawFooter()
         );
 
         int centerX =
-            x + (w / 2);
+            x + w / 2;
 
         int centerY =
-            y + (height / 2);
-
-        // ====================================================
-        // HAUT
-        // ====================================================
+            y + height / 2;
 
         if (i == 0)
         {
@@ -414,11 +713,6 @@ void drawFooter()
                 COLOR_BUTTON_TEXT
             );
         }
-
-        // ====================================================
-        // BAS
-        // ====================================================
-
         else if (i == 1)
         {
             drawArrow(
@@ -429,11 +723,6 @@ void drawFooter()
                 COLOR_BUTTON_TEXT
             );
         }
-
-        // ====================================================
-        // GAUCHE
-        // ====================================================
-
         else if (i == 2)
         {
             drawArrow(
@@ -444,11 +733,6 @@ void drawFooter()
                 COLOR_BUTTON_TEXT
             );
         }
-
-        // ====================================================
-        // DROITE
-        // ====================================================
-
         else if (i == 3)
         {
             drawArrow(
@@ -459,11 +743,6 @@ void drawFooter()
                 COLOR_BUTTON_TEXT
             );
         }
-
-        // ====================================================
-        // ANNULER
-        // ====================================================
-
         else if (i == 4)
         {
             const int s = 5;
@@ -484,11 +763,6 @@ void drawFooter()
                 TFT_WHITE
             );
         }
-
-        // ====================================================
-        // VALIDER
-        // ====================================================
-
         else if (i == 5)
         {
             tft.drawLine(
@@ -527,75 +801,58 @@ static void drawArrow(
     const int length = 8;
     const int head = 5;
 
-    // ========================================================
-    // FLECHE VERTICALE
-    // ========================================================
-
     if (directionX == 0)
     {
-        // Corps
-
         tft.drawLine(
             centerX,
-            centerY - (directionY * length),
+            centerY - directionY * length,
             centerX,
-            centerY + (directionY * length),
+            centerY + directionY * length,
             color
         );
 
-        // Pointe
-
         tft.drawLine(
             centerX,
-            centerY + (directionY * length),
+            centerY + directionY * length,
             centerX - head,
-            centerY + (directionY * length)
-                - (directionY * head),
+            centerY + directionY * length
+                - directionY * head,
             color
         );
 
         tft.drawLine(
             centerX,
-            centerY + (directionY * length),
+            centerY + directionY * length,
             centerX + head,
-            centerY + (directionY * length)
-                - (directionY * head),
+            centerY + directionY * length
+                - directionY * head,
             color
         );
     }
-
-    // ========================================================
-    // FLECHE HORIZONTALE
-    // ========================================================
-
     else
     {
-        // Corps
-
         tft.drawLine(
-            centerX - (directionX * length),
+            centerX - directionX * length,
             centerY,
-            centerX + (directionX * length),
+            centerX + directionX * length,
             centerY,
             color
         );
 
-        // Pointe
-
         tft.drawLine(
-            centerX + (directionX * length),
+            centerX + directionX * length,
             centerY,
-            centerX + (directionX * length)
-                - (directionX * head),
+            centerX + directionX * length
+                - directionX * head,
             centerY - head,
             color
         );
 
         tft.drawLine(
-            centerX + (directionX * length),
+            centerX + directionX * length,
             centerY,
-            centerX + (directionX * length)
-                - (directionX * head),
+            centerX + directionX * length
+                - directionX * head,
             centerY + head,
             color
         );
@@ -636,8 +893,13 @@ void drawButton(
         color
     );
 
-    tft.setTextFont(1);
-    tft.setTextSize(1);
+    tft.setTextFont(
+        1
+    );
+
+    tft.setTextSize(
+        1
+    );
 
     tft.setTextDatum(
         MC_DATUM
@@ -675,8 +937,13 @@ void centerText(
     uint16_t color
 )
 {
-    tft.setTextFont(1);
-    tft.setTextSize(size);
+    tft.setTextFont(
+        1
+    );
+
+    tft.setTextSize(
+        size
+    );
 
     tft.setTextDatum(
         TC_DATUM
@@ -692,39 +959,4 @@ void centerText(
         SCREEN_WIDTH / 2,
         y
     );
-}
-
-// ============================================================
-// ETAT
-// ============================================================
-
-void setStatus(
-    int index,
-    uint16_t color
-)
-{
-    if (index < 0 || index > 3)
-    {
-        return;
-    }
-
-    statusColors[index] =
-        color;
-
-    drawStatusSquares();
-}
-
-// ============================================================
-// RESET ETATS
-// ============================================================
-
-void clearStatus()
-{
-    for (int i = 0; i < 4; i++)
-    {
-        statusColors[i] =
-            COLOR_LINE;
-    }
-
-    drawStatusSquares();
 }
