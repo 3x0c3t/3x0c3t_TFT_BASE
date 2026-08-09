@@ -17,14 +17,14 @@
 // COULEURS GENERALES
 // ============================================================
 
-#define COLOR_BACKGROUND     TFT_BLACK
-#define COLOR_TEXT           TFT_WHITE
-#define COLOR_PRIMARY        TFT_CYAN
-#define COLOR_LINE           TFT_DARKGREY
+#define COLOR_BACKGROUND    TFT_BLACK
+#define COLOR_TEXT          TFT_WHITE
+#define COLOR_PRIMARY       TFT_CYAN
+#define COLOR_LINE          TFT_DARKGREY
 
-#define COLOR_OK             TFT_GREEN
-#define COLOR_ERROR          TFT_RED
-#define COLOR_WARNING        TFT_YELLOW
+#define COLOR_OK            TFT_GREEN
+#define COLOR_ERROR         TFT_RED
+#define COLOR_WARNING       TFT_YELLOW
 
 // ============================================================
 // BOUTONS
@@ -34,15 +34,9 @@
 // Couleurs générales des boutons
 // ------------------------------------------------------------
 
-// Fond du bouton
 #define COLOR_BUTTON_BG             TFT_DARKGREY
-
-// Contour du bouton
 #define COLOR_BUTTON_BORDER         TFT_WHITE
-
-// Texte / icône
 #define COLOR_BUTTON_TEXT           TFT_WHITE
-
 
 // ------------------------------------------------------------
 // Boutons navigation
@@ -54,14 +48,12 @@
 #define COLOR_BUTTON_RIGHT          COLOR_BUTTON_BG
 #define COLOR_BUTTON_MENU           COLOR_BUTTON_BG
 
-
 // ------------------------------------------------------------
 // Bouton ANNULER
 // ------------------------------------------------------------
 
 #define COLOR_BUTTON_CANCEL_BG      COLOR_ERROR
 #define COLOR_BUTTON_CANCEL_BORDER  TFT_WHITE
-
 
 // ------------------------------------------------------------
 // Bouton OK
@@ -70,21 +62,17 @@
 #define COLOR_BUTTON_OK_BG          COLOR_OK
 #define COLOR_BUTTON_OK_BORDER      TFT_WHITE
 
-
 // ============================================================
 // HEADER
 // ============================================================
 
-// Première ligne horizontale
 #define HEADER_LINE_1_Y             10
 
 // Barre de progression
-// EXACTEMENT 1 PIXEL DE HAUTEUR
 #define PROGRESS_Y                  19
 #define PROGRESS_HEIGHT             1
 #define COLOR_PROGRESS              COLOR_PRIMARY
 
-// Deuxième ligne horizontale
 #define HEADER_LINE_2_Y             12
 
 // Heure
@@ -102,7 +90,7 @@
 
 #define TITLE_Y                     13
 #define TITLE_HEIGHT                20
-#define TITLE_LINE_Y               30
+#define TITLE_LINE_Y                30
 
 #define COLOR_TITLE_TEXT            COLOR_PRIMARY
 #define COLOR_TITLE_LINE            COLOR_LINE
@@ -127,7 +115,6 @@
 
 #define FOOTER_MENU_WIDTH           30
 
-// Carré MENU
 #define FOOTER_MENU_ICON_SIZE       14
 #define FOOTER_MENU_ICON_RADIUS     3
 #define FOOTER_MENU_ICON_LINE       2
@@ -171,7 +158,7 @@
 
 // ------------------------------------------------------------
 // Barre de progression Splash
-// Identique à la barre de progression du HEADER
+// Identique à celle du HEADER
 // ------------------------------------------------------------
 
 #define SPLASH_PROGRESS_X           0
@@ -195,7 +182,7 @@
 #define SETTINGS_TITLE              "REGLAGES"
 
 // ------------------------------------------------------------
-// Couleurs générales
+// Couleurs
 // ------------------------------------------------------------
 
 #define SETTINGS_TEXT_COLOR         COLOR_TEXT
@@ -211,7 +198,6 @@
 #define SETTINGS_ITEM_START_Y       55
 #define SETTINGS_ITEM_HEIGHT        30
 
-// Nombre d'éléments visibles
 #define SETTINGS_VISIBLE_ITEMS      6
 
 // ------------------------------------------------------------

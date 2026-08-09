@@ -1,5 +1,7 @@
 #include "display.h"
+
 #include <time.h>
+
 #include "config.h"
 
 // ============================================================
@@ -193,7 +195,7 @@ void drawStatusSquares()
 
     for (int i = 0; i < 4; i++)
     {
-        int x =
+        const int x =
             startX +
             i * (squareSize + spacing);
 
@@ -336,7 +338,7 @@ void drawFooter()
         FOOTER_HEIGHT;
 
     // --------------------------------------------------------
-    // FOND
+    // FOND FOOTER
     // --------------------------------------------------------
 
     tft.fillRect(
@@ -348,7 +350,7 @@ void drawFooter()
     );
 
     // --------------------------------------------------------
-    // CONTOUR SUPERIEUR
+    // LIGNE SUPERIEURE
     // --------------------------------------------------------
 
     tft.drawFastHLine(
@@ -362,12 +364,6 @@ void drawFooter()
     // BOUTON MENU
     // --------------------------------------------------------
 
-    const int buttonY =
-        y + 1;
-
-    const int buttonHeight =
-        height - 1;
-
     const int iconSize =
         FOOTER_MENU_ICON_SIZE;
 
@@ -375,27 +371,27 @@ void drawFooter()
         (FOOTER_MENU_WIDTH - iconSize) / 2;
 
     const int iconY =
-        buttonY +
-        (buttonHeight - iconSize) / 2;
+        y +
+        (height - iconSize) / 2;
 
-    // Fond du bouton
+    // Fond du carré arrondi
     tft.fillRoundRect(
         iconX,
         iconY,
         iconSize,
         iconSize,
         FOOTER_MENU_ICON_RADIUS,
-        COLOR_FOOTER_MENU
+        COLOR_FOOTER_MENU_BG
     );
 
-    // Contour du bouton
+    // Contour du carré arrondi
     tft.drawRoundRect(
         iconX,
         iconY,
         iconSize,
         iconSize,
         FOOTER_MENU_ICON_RADIUS,
-        COLOR_FOOTER_MENU_LINE
+        COLOR_FOOTER_MENU_BORDER
     );
 
     // --------------------------------------------------------
@@ -440,6 +436,10 @@ void drawFooterInfo(
     const int height =
         FOOTER_HEIGHT - 2;
 
+    // --------------------------------------------------------
+    // NETTOYAGE
+    // --------------------------------------------------------
+
     tft.fillRect(
         x,
         y,
@@ -448,10 +448,18 @@ void drawFooterInfo(
         COLOR_FOOTER_BG
     );
 
+    // --------------------------------------------------------
+    // PAS DE TEXTE
+    // --------------------------------------------------------
+
     if (text.length() == 0)
     {
         return;
     }
+
+    // --------------------------------------------------------
+    // TEXTE
+    // --------------------------------------------------------
 
     tft.setTextFont(
         1
@@ -490,21 +498,17 @@ static void drawArrow(
     uint16_t color
 )
 {
-    int left =
-        centerX -
-        w / 2;
+    const int left =
+        centerX - w / 2;
 
-    int top =
-        centerY -
-        h / 2;
+    const int top =
+        centerY - h / 2;
 
-    int right =
-        centerX +
-        w / 2;
+    const int right =
+        centerX + w / 2;
 
-    int bottom =
-        centerY +
-        h / 2;
+    const int bottom =
+        centerY + h / 2;
 
     tft.drawRect(
         left,
@@ -516,6 +520,10 @@ static void drawArrow(
 
     const int shaft = 3;
     const int head = 5;
+
+    // --------------------------------------------------------
+    // HAUT
+    // --------------------------------------------------------
 
     if (direction == 0)
     {
@@ -537,6 +545,11 @@ static void drawArrow(
             color
         );
     }
+
+    // --------------------------------------------------------
+    // BAS
+    // --------------------------------------------------------
+
     else if (direction == 1)
     {
         tft.fillRect(
@@ -557,6 +570,11 @@ static void drawArrow(
             color
         );
     }
+
+    // --------------------------------------------------------
+    // GAUCHE
+    // --------------------------------------------------------
+
     else if (direction == 2)
     {
         tft.fillRect(
@@ -577,6 +595,11 @@ static void drawArrow(
             color
         );
     }
+
+    // --------------------------------------------------------
+    // DROITE
+    // --------------------------------------------------------
+
     else
     {
         tft.fillRect(
@@ -617,13 +640,39 @@ void drawButton(
         return;
     }
 
+    // --------------------------------------------------------
+    // DETERMINATION DE LA COULEUR DU CONTOUR
+    // --------------------------------------------------------
+
+    uint16_t borderColor =
+        COLOR_BUTTON_BORDER;
+
+    if (color == COLOR_BUTTON_OK_BG)
+    {
+        borderColor =
+            COLOR_BUTTON_OK_BORDER;
+    }
+    else if (color == COLOR_BUTTON_CANCEL_BG)
+    {
+        borderColor =
+            COLOR_BUTTON_CANCEL_BORDER;
+    }
+
+    // --------------------------------------------------------
+    // BORDURE
+    // --------------------------------------------------------
+
     tft.drawRect(
         x,
         y,
         w,
         h,
-        COLOR_FOOTER_LINE
+        borderColor
     );
+
+    // --------------------------------------------------------
+    // FOND
+    // --------------------------------------------------------
 
     tft.fillRect(
         x + 1,
@@ -632,6 +681,10 @@ void drawButton(
         h - 2,
         color
     );
+
+    // --------------------------------------------------------
+    // TEXTE
+    // --------------------------------------------------------
 
     tft.setTextFont(
         1
@@ -648,16 +701,12 @@ void drawButton(
     uint16_t textColor =
         COLOR_BUTTON_TEXT;
 
-    if (
-        color == COLOR_BUTTON_OK ||
-        color == COLOR_FOOTER_MENU
-    )
+    if (color == COLOR_BUTTON_OK_BG)
     {
         textColor =
             TFT_BLACK;
     }
-
-    if (color == COLOR_BUTTON_CANCEL)
+    else if (color == COLOR_BUTTON_CANCEL_BG)
     {
         textColor =
             TFT_WHITE;
@@ -719,10 +768,7 @@ void setStatus(
     uint16_t color
 )
 {
-    if (
-        index < 0 ||
-        index > 3
-    )
+    if (index < 0 || index > 3)
     {
         return;
     }

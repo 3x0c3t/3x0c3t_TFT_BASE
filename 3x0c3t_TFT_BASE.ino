@@ -6,6 +6,8 @@
 #include "wifi.h"
 #include "weather.h"
 #include "clock.h"
+#include "pages.h"
+#include "settings.h"
 
 // ============================================================
 // SETUP
@@ -43,6 +45,14 @@ void setup()
     );
 
     // ========================================================
+    // INITIALISATION DES PAGES
+    // ========================================================
+
+    pagesInit();
+
+    settingsInit();
+
+    // ========================================================
     // HORLOGE
     // ========================================================
 
@@ -64,8 +74,8 @@ void setup()
     // INTERFACE
     // ========================================================
 
-    drawInterface(
-        "SYSTEME"
+    pagesShow(
+        PAGE_HOME
     );
 
     Serial.println();

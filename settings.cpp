@@ -42,23 +42,11 @@ void settingsInit()
 
 void settingsShow()
 {
-    // --------------------------------------------------------
-    // Nettoyage du contenu
-    // --------------------------------------------------------
-
     clearContent();
-
-    // --------------------------------------------------------
-    // Titre
-    // --------------------------------------------------------
 
     drawTitle(
         SETTINGS_TITLE
     );
-
-    // --------------------------------------------------------
-    // Liste des réglages
-    // --------------------------------------------------------
 
     for (int i = 0; i < SETTINGS_COUNT; i++)
     {
@@ -81,7 +69,7 @@ void settingsShow()
             SETTINGS_ITEM_HEIGHT - 2;
 
         // ----------------------------------------------------
-        // Fond
+        // FOND
         // ----------------------------------------------------
 
         if (selected)
@@ -107,7 +95,7 @@ void settingsShow()
         }
 
         // ----------------------------------------------------
-        // Ligne de séparation
+        // LIGNE DE SEPARATION
         // ----------------------------------------------------
 
         if (!selected)
@@ -122,12 +110,20 @@ void settingsShow()
         }
 
         // ----------------------------------------------------
-        // Texte
+        // TEXTE
         // ----------------------------------------------------
 
-        tft.setTextFont(1);
-        tft.setTextSize(1);
-        tft.setTextDatum(ML_DATUM);
+        tft.setTextFont(
+            1
+        );
+
+        tft.setTextSize(
+            1
+        );
+
+        tft.setTextDatum(
+            ML_DATUM
+        );
 
         if (selected)
         {
@@ -136,14 +132,12 @@ void settingsShow()
                 SETTINGS_SELECTED_COLOR
             );
 
-            // Indicateur de sélection
             tft.drawString(
                 ">",
                 SETTINGS_ITEM_X + 2,
                 y + SETTINGS_ITEM_HEIGHT / 2 - 2
             );
 
-            // Libellé
             tft.drawString(
                 settingsLabels[i],
                 SETTINGS_ITEM_X + 14,
@@ -232,8 +226,7 @@ void settingsButtonRight()
 
 void settingsButtonMenu()
 {
-    // La navigation vers PAGE_MENU
-    // est gérée par pages.cpp.
+    // Navigation gérée par pages.cpp.
 }
 
 // ============================================================
@@ -242,7 +235,7 @@ void settingsButtonMenu()
 
 void settingsButtonCancel()
 {
-    // Réservé à la navigation des sous-pages.
+    // Navigation vers la page précédente.
 }
 
 // ============================================================
