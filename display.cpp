@@ -10,19 +10,21 @@
 
 TFT_eSPI tft = TFT_eSPI();
 
+
 // ============================================================
 // ETAT
 // ============================================================
 
 static uint16_t statusColors[4] =
 {
-    COLOR_LINE,
-    COLOR_LINE,
-    COLOR_LINE,
-    COLOR_LINE
+    COLOR_HEADER_STATUS,
+    COLOR_HEADER_STATUS,
+    COLOR_HEADER_STATUS,
+    COLOR_HEADER_STATUS
 };
 
 static uint8_t progressValue = 0;
+
 
 // ============================================================
 // FONCTION INTERNE
@@ -37,6 +39,7 @@ static void drawArrow(
     uint16_t color
 );
 
+
 // ============================================================
 // INITIALISATION
 // ============================================================
@@ -45,7 +48,9 @@ void displayInit()
 {
     tft.init();
 
-    tft.setRotation(TFT_ROTATION);
+    tft.setRotation(
+        TFT_ROTATION
+    );
 
     tft.fillScreen(
         COLOR_BACKGROUND
@@ -57,6 +62,7 @@ void displayInit()
         "SYSTEME"
     );
 }
+
 
 // ============================================================
 // INTERFACE COMPLETE
@@ -81,6 +87,7 @@ void drawInterface(
     drawFooter();
 }
 
+
 // ============================================================
 // HEADER
 // ============================================================
@@ -93,20 +100,23 @@ void drawHeader()
 
     drawProgressBar();
 
+    // Ligne 1
     tft.drawFastHLine(
         0,
         HEADER_LINE_1_Y,
         SCREEN_WIDTH,
-        COLOR_LINE
+        COLOR_HEADER_LINE
     );
 
+    // Ligne 2
     tft.drawFastHLine(
         0,
         HEADER_LINE_2_Y,
         SCREEN_WIDTH,
-        COLOR_LINE
+        COLOR_HEADER_LINE
     );
 }
+
 
 // ============================================================
 // HEURE
@@ -154,16 +164,17 @@ void drawHeaderTime()
     );
 
     tft.setTextColor(
-        COLOR_TEXT,
+        COLOR_HEADER_TIME,
         COLOR_BACKGROUND
     );
 
     tft.drawString(
         String(buffer),
-        2,
-        0
+        HEADER_TIME_X,
+        HEADER_TIME_Y
     );
 }
+
 
 // ============================================================
 // CARRES DE STATUT
@@ -201,16 +212,19 @@ void drawStatusSquares()
     }
 }
 
+
 // ============================================================
 // BARRE DE PROGRESSION
 // ============================================================
 
 void drawProgressBar()
 {
-    tft.drawFastHLine(
+    // Effacement de la ligne de progression
+    tft.fillRect(
         0,
         PROGRESS_Y,
         SCREEN_WIDTH,
+        PROGRESS_HEIGHT,
         COLOR_BACKGROUND
     );
 
@@ -225,14 +239,16 @@ void drawProgressBar()
 
     if (width > 0)
     {
-        tft.drawFastHLine(
+        tft.fillRect(
             0,
             PROGRESS_Y,
             width,
-            COLOR_PRIMARY
+            PROGRESS_HEIGHT,
+            COLOR_PROGRESS
         );
     }
 }
+
 
 // ============================================================
 // PROGRESSION
@@ -252,6 +268,7 @@ void setProgress(
 
     drawProgressBar();
 }
+
 
 // ============================================================
 // TITRE
@@ -278,23 +295,24 @@ void drawTitle(
     );
 
     tft.setTextColor(
-        COLOR_PRIMARY,
+        COLOR_TITLE_TEXT,
         COLOR_BACKGROUND
     );
 
     tft.drawString(
         title,
         SCREEN_WIDTH / 2,
-        TITLE_Y + 1
+        TITLE_Y
     );
 
     tft.drawFastHLine(
         0,
         TITLE_LINE_Y,
         SCREEN_WIDTH,
-        COLOR_LINE
+        COLOR_TITLE_LINE
     );
 }
+
 
 // ============================================================
 // CONTENU
@@ -311,8 +329,9 @@ void clearContent()
     );
 }
 
+
 // ============================================================
-// FOOTER COMPACT
+// FOOTER
 // ============================================================
 
 void drawFooter()
@@ -328,15 +347,20 @@ void drawFooter()
         y,
         SCREEN_WIDTH,
         height,
-        COLOR_BACKGROUND
+        COLOR_FOOTER_BG
     );
 
     tft.drawFastHLine(
         0,
         y,
         SCREEN_WIDTH,
-        COLOR_LINE
+        COLOR_FOOTER_LINE
     );
+
+
+    // ========================================================
+    // 7 BOUTONS
+    // ========================================================
 
     const int buttonCount = 7;
 
@@ -350,8 +374,9 @@ void drawFooter()
 
     int x = 0;
 
+
     // ========================================================
-    // FLECHE HAUT
+    // HAUT
     // ========================================================
 
     int w =
@@ -364,13 +389,14 @@ void drawFooter()
         w,
         height,
         0,
-        COLOR_BUTTON
+        COLOR_BUTTON_UP
     );
 
     x += w;
 
+
     // ========================================================
-    // FLECHE BAS
+    // BAS
     // ========================================================
 
     w =
@@ -383,13 +409,14 @@ void drawFooter()
         w,
         height,
         1,
-        COLOR_BUTTON
+        COLOR_BUTTON_DOWN
     );
 
     x += w;
 
+
     // ========================================================
-    // FLECHE GAUCHE
+    // GAUCHE
     // ========================================================
 
     w =
@@ -402,13 +429,14 @@ void drawFooter()
         w,
         height,
         2,
-        COLOR_BUTTON
+        COLOR_BUTTON_LEFT
     );
 
     x += w;
 
+
     // ========================================================
-    // FLECHE DROITE
+    // DROITE
     // ========================================================
 
     w =
@@ -421,10 +449,11 @@ void drawFooter()
         w,
         height,
         3,
-        COLOR_BUTTON
+        COLOR_BUTTON_RIGHT
     );
 
     x += w;
+
 
     // ========================================================
     // MENU
@@ -440,10 +469,11 @@ void drawFooter()
         w,
         height - 1,
         "M",
-        COLOR_BUTTON
+        COLOR_BUTTON_MENU
     );
 
     x += w;
+
 
     // ========================================================
     // ANNULER
@@ -459,10 +489,11 @@ void drawFooter()
         w,
         height - 1,
         "X",
-        COLOR_ERROR
+        COLOR_BUTTON_CANCEL
     );
 
     x += w;
+
 
     // ========================================================
     // VALIDER
@@ -478,9 +509,10 @@ void drawFooter()
         w,
         height - 1,
         "V",
-        COLOR_OK
+        COLOR_BUTTON_OK
     );
 }
+
 
 // ============================================================
 // FLECHES
@@ -511,16 +543,20 @@ static void drawArrow(
         centerY +
         h / 2;
 
+
+    // Cadre
     tft.drawRect(
         left,
         top,
         w,
         h,
-        COLOR_LINE
+        COLOR_FOOTER_LINE
     );
+
 
     const int shaft = 3;
     const int head = 5;
+
 
     // ========================================================
     // HAUT
@@ -547,6 +583,7 @@ static void drawArrow(
         );
     }
 
+
     // ========================================================
     // BAS
     // ========================================================
@@ -572,6 +609,7 @@ static void drawArrow(
         );
     }
 
+
     // ========================================================
     // GAUCHE
     // ========================================================
@@ -596,6 +634,7 @@ static void drawArrow(
             color
         );
     }
+
 
     // ========================================================
     // DROITE
@@ -623,6 +662,7 @@ static void drawArrow(
     }
 }
 
+
 // ============================================================
 // BOUTON
 // ============================================================
@@ -646,7 +686,7 @@ void drawButton(
         y,
         w,
         h,
-        COLOR_LINE
+        COLOR_FOOTER_LINE
     );
 
     tft.fillRect(
@@ -668,10 +708,16 @@ void drawButton(
     uint16_t textColor =
         COLOR_BUTTON_TEXT;
 
-    if (color == COLOR_OK)
+    if (color == COLOR_BUTTON_OK)
     {
         textColor =
             TFT_BLACK;
+    }
+
+    if (color == COLOR_BUTTON_CANCEL)
+    {
+        textColor =
+            TFT_WHITE;
     }
 
     tft.setTextColor(
@@ -685,6 +731,7 @@ void drawButton(
         y + h / 2
     );
 }
+
 
 // ============================================================
 // TEXTE CENTRE
@@ -718,6 +765,7 @@ void centerText(
         y
     );
 }
+
 
 // ============================================================
 // STATUT
