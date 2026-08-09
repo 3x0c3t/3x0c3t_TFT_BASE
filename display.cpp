@@ -1,5 +1,5 @@
 #include "display.h"
-#include <time.h>
+#include "clock.h"
 
 // ============================================================
 // TFT

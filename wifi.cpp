@@ -1,17 +1,43 @@
 #include "wifi.h"
 
 #include <ESP8266WiFi.h>
+#include <time.h>
 
 #include "config.h"
+#include "secrets.h"
 #include "display.h"
 
 // ============================================================
-// ETAT INTERNE
+// ETAT WIFI
 // ============================================================
 
-static unsigned long lastReconnectAttempt = 0;
+static bool wifiConnectedState = false;
 
-static bool wifiWasConnected = false;
+static unsigned long lastWifiAttempt = 0;
+
+// ============================================================
+// WIFI ACTUEL
+// ============================================================
+
+static const char* getWifiSSID()
+{
+    if (strlen(WIFI1_SSID) > 0)
+    {
+        return WIFI1_SSID;
+    }
+
+    return WIFI2_SSID;
+}
+
+static const char* getWifiPassword()
+{
+    if (strlen(WIFI1_SSID) > 0)
+    {
+        return WIFI1_PASSWORD;
+    }
+
+    return WIFI2_PASSWORD;
+}
 
 // ============================================================
 // INITIALISATION
@@ -20,64 +46,58 @@ static bool wifiWasConnected = false;
 void wifiInit()
 {
     Serial.println();
-    Serial.println(
-        "================================"
-    );
+    Serial.println("================================");
+    Serial.println("[WIFI] INITIALISATION");
+    Serial.println("================================");
 
-    Serial.println(
-        "[WIFI] INITIALISATION"
-    );
-
-    Serial.println(
-        "================================"
-    );
-
-    // Ajout du statut WiFi dans le header.
-
-    addStatus(
+    setStatus(
         "W",
         COLOR_ERROR
     );
 
+    const char* ssid =
+        getWifiSSID();
+
+    const char* password =
+        getWifiPassword();
+
     if (
-        strlen(WIFI_SSID) == 0
+        ssid == nullptr ||
+        strlen(ssid) == 0
     )
     {
         Serial.println(
-            "[WIFI] SSID non configure"
+            "[WIFI] Aucun SSID configure"
         );
 
-        setStatus(
-            "W",
-            COLOR_ERROR
-        );
+        wifiConnectedState = false;
 
         return;
     }
-
-    WiFi.mode(
-        WIFI_STA
-    );
-
-    WiFi.persistent(
-        false
-    );
-
-    WiFi.setAutoReconnect(
-        true
-    );
-
-    WiFi.begin(
-        WIFI_SSID,
-        WIFI_PASSWORD
-    );
 
     Serial.print(
         "[WIFI] Connexion a : "
     );
 
     Serial.println(
-        WIFI_SSID
+        ssid
+    );
+
+    WiFi.mode(
+        WIFI_STA
+    );
+
+    WiFi.setAutoReconnect(
+        true
+    );
+
+    WiFi.persistent(
+        false
+    );
+
+    WiFi.begin(
+        ssid,
+        password
     );
 
     unsigned long start =
@@ -85,15 +105,12 @@ void wifiInit()
 
     while (
         WiFi.status() != WL_CONNECTED &&
-        millis() - start <
-        WIFI_CONNECT_TIMEOUT
+        millis() - start < WIFI_CONNECT_TIMEOUT
     )
     {
         delay(250);
 
-        Serial.print(
-            "."
-        );
+        Serial.print(".");
     }
 
     Serial.println();
@@ -103,8 +120,19 @@ void wifiInit()
         WL_CONNECTED
     )
     {
-        wifiWasConnected =
-            true;
+        wifiConnectedState = true;
+
+        Serial.println(
+            "[WIFI] CONNECTE"
+        );
+
+        Serial.print(
+            "[WIFI] IP : "
+        );
+
+        Serial.println(
+            WiFi.localIP()
+        );
 
         setStatus(
             "W",
@@ -112,54 +140,29 @@ void wifiInit()
         );
 
         Serial.println(
-            "[WIFI] CONNECTE"
+            "[CLOCK] Synchronisation NTP..."
         );
 
-        Serial.print(
-            "[WIFI] SSID : "
-        );
-
-        Serial.println(
-            WiFi.SSID()
-        );
-
-        Serial.print(
-            "[WIFI] IP   : "
-        );
-
-        Serial.println(
-            WiFi.localIP()
-        );
-
-        Serial.print(
-            "[WIFI] RSSI : "
-        );
-
-        Serial.print(
-            WiFi.RSSI()
-        );
-
-        Serial.println(
-            " dBm"
+        configTime(
+            CLOCK_GMT_OFFSET,
+            CLOCK_DAYLIGHT_OFFSET,
+            CLOCK_NTP_SERVER_1,
+            CLOCK_NTP_SERVER_2
         );
     }
     else
     {
-        wifiWasConnected =
-            false;
+        wifiConnectedState = false;
+
+        Serial.println(
+            "[WIFI] ECHEC CONNEXION"
+        );
 
         setStatus(
             "W",
             COLOR_ERROR
         );
-
-        Serial.println(
-            "[WIFI] ECHEC CONNEXION"
-        );
     }
-
-    lastReconnectAttempt =
-        millis();
 }
 
 // ============================================================
@@ -171,28 +174,16 @@ void wifiUpdate()
     wl_status_t status =
         WiFi.status();
 
-    // --------------------------------------------------------
-    // CONNECTE
-    // --------------------------------------------------------
-
     if (
-        status ==
-        WL_CONNECTED
+        status == WL_CONNECTED
     )
     {
-        if (!wifiWasConnected)
+        if (!wifiConnectedState)
         {
-            wifiWasConnected =
-                true;
+            wifiConnectedState = true;
 
-            setStatus(
-                "W",
-                COLOR_OK
-            );
-
-            Serial.println();
             Serial.println(
-                "[WIFI] RECONNECTE"
+                "[WIFI] CONNEXION RETABLIE"
             );
 
             Serial.print(
@@ -202,60 +193,63 @@ void wifiUpdate()
             Serial.println(
                 WiFi.localIP()
             );
-        }
-        else
-        {
-            setStatus(
-                "W",
-                COLOR_OK
+
+            configTime(
+                CLOCK_GMT_OFFSET,
+                CLOCK_DAYLIGHT_OFFSET,
+                CLOCK_NTP_SERVER_1,
+                CLOCK_NTP_SERVER_2
             );
         }
+
+        setStatus(
+            "W",
+            COLOR_OK
+        );
 
         return;
     }
 
-    // --------------------------------------------------------
-    // DECONNECTE
-    // --------------------------------------------------------
-
-    if (wifiWasConnected)
+    if (wifiConnectedState)
     {
-        wifiWasConnected =
-            false;
+        wifiConnectedState = false;
+
+        Serial.println(
+            "[WIFI] CONNEXION PERDUE"
+        );
 
         setStatus(
             "W",
             COLOR_ERROR
         );
-
-        Serial.println();
-        Serial.println(
-            "[WIFI] DECONNECTE"
-        );
     }
 
-    // --------------------------------------------------------
-    // RECONNEXION
-    // --------------------------------------------------------
-
-    unsigned long now =
-        millis();
-
     if (
-        now - lastReconnectAttempt <
-        WIFI_RECONNECT_INTERVAL
+        millis() - lastWifiAttempt <
+        WIFI_RETRY_INTERVAL
     )
     {
         return;
     }
 
-    lastReconnectAttempt =
-        now;
+    lastWifiAttempt =
+        millis();
+
+    const char* ssid =
+        getWifiSSID();
+
+    const char* password =
+        getWifiPassword();
 
     if (
-        strlen(WIFI_SSID) == 0
+        ssid == nullptr ||
+        strlen(ssid) == 0
     )
     {
+        Serial.println(
+            "[WIFI] Aucun SSID configure"
+        );
+
         return;
     }
 
@@ -268,8 +262,8 @@ void wifiUpdate()
     delay(100);
 
     WiFi.begin(
-        WIFI_SSID,
-        WIFI_PASSWORD
+        ssid,
+        password
     );
 }
 
@@ -277,61 +271,10 @@ void wifiUpdate()
 // ETAT
 // ============================================================
 
-bool wifiConnected()
+bool wifiIsConnected()
 {
     return (
         WiFi.status() ==
         WL_CONNECTED
     );
-}
-
-// ============================================================
-// SSID
-// ============================================================
-
-String wifiSSID()
-{
-    if (
-        WiFi.status() !=
-        WL_CONNECTED
-    )
-    {
-        return "";
-    }
-
-    return WiFi.SSID();
-}
-
-// ============================================================
-// IP
-// ============================================================
-
-String wifiIP()
-{
-    if (
-        WiFi.status() !=
-        WL_CONNECTED
-    )
-    {
-        return "";
-    }
-
-    return WiFi.localIP().toString();
-}
-
-// ============================================================
-// RSSI
-// ============================================================
-
-int wifiRSSI()
-{
-    if (
-        WiFi.status() !=
-        WL_CONNECTED
-    )
-    {
-        return 0;
-    }
-
-    return WiFi.RSSI();
 }

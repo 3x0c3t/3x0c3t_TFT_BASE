@@ -6,7 +6,9 @@
 #include <ArduinoJson.h>
 
 #include "config.h"
+#include "secrets.h"
 #include "display.h"
+#include "wifi.h"
 
 // ============================================================
 // DONNEES METEO
@@ -47,7 +49,9 @@ void weatherInit()
 
 bool weatherUpdate()
 {
-    if (strlen(WEATHER_API_KEY) == 0)
+    if (
+        strlen(WEATHER_API_KEY) == 0
+    )
     {
         Serial.println(
             "METEO : cle API absente"
@@ -56,7 +60,7 @@ bool weatherUpdate()
         return false;
     }
 
-    if (WiFi.status() != WL_CONNECTED)
+    if (!wifiIsConnected())
     {
         Serial.println(
             "METEO : WiFi non connecte"
@@ -100,10 +104,16 @@ bool weatherUpdate()
 
     HTTPClient http;
 
-    if (!http.begin(
-        client,
-        url
-    ))
+    Serial.println(
+        "[METEO] Requete OpenWeather..."
+    );
+
+    if (
+        !http.begin(
+            client,
+            url
+        )
+    )
     {
         Serial.println(
             "METEO : impossible de demarrer HTTP"
@@ -115,7 +125,10 @@ bool weatherUpdate()
     int httpCode =
         http.GET();
 
-    if (httpCode != HTTP_CODE_OK)
+    if (
+        httpCode !=
+        HTTP_CODE_OK
+    )
     {
         Serial.print(
             "METEO HTTP : "
@@ -190,7 +203,20 @@ bool weatherUpdate()
         now;
 
     Serial.println(
-        "METEO : mise a jour OK"
+        "[METEO] Mise a jour OK"
+    );
+
+    Serial.print(
+        "[METEO] Temperature : "
+    );
+
+    Serial.print(
+        weatherTemperature,
+        1
+    );
+
+    Serial.println(
+        " C"
     );
 
     return true;
@@ -205,13 +231,9 @@ void drawWeather(
     int y
 )
 {
-    tft.setTextFont(
-        1
-    );
+    tft.setTextFont(1);
 
-    tft.setTextSize(
-        1
-    );
+    tft.setTextSize(1);
 
     tft.setTextDatum(
         TL_DATUM
@@ -288,7 +310,9 @@ void drawWeather(
         y + 72
     );
 
-    if (weatherDescription.length() > 0)
+    if (
+        weatherDescription.length() > 0
+    )
     {
         tft.drawString(
             weatherDescription,
