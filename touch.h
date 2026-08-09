@@ -7,6 +7,7 @@ void touchInit();
 void touchUpdate();
 
 bool touchPressed();
+
 uint16_t touchGetX();
 uint16_t touchGetY();
 

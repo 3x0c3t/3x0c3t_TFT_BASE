@@ -4,30 +4,14 @@
 #include <SPI.h>
 #include <XPT2046_Touchscreen.h>
 
-// ============================================================
-// BROCHAGE XPT2046
-// ============================================================
-
 #define TOUCH_CS   0
 #define TOUCH_IRQ  5
 
-// ============================================================
-// OBJET TACTILE
-// ============================================================
-
 XPT2046_Touchscreen touch(TOUCH_CS, TOUCH_IRQ);
-
-// ============================================================
-// ETAT
-// ============================================================
 
 static bool touchIsPressed = false;
 static uint16_t touchX = 0;
 static uint16_t touchY = 0;
-
-// ============================================================
-// INITIALISATION
-// ============================================================
 
 void touchInit()
 {
@@ -35,11 +19,13 @@ void touchInit()
     Serial.println("[TOUCH] ================================");
     Serial.println("[TOUCH] touchInit() START");
 
-    Serial.print("[TOUCH] CS  = GPIO ");
+    Serial.print("[TOUCH] CS = GPIO ");
     Serial.println(TOUCH_CS);
 
     Serial.print("[TOUCH] IRQ = GPIO ");
     Serial.println(TOUCH_IRQ);
+
+    Serial.println("[TOUCH] SPI materiel deja utilise par le TFT");
 
     if (touch.begin())
     {
@@ -55,18 +41,23 @@ void touchInit()
     Serial.print("[TOUCH] rotation = ");
     Serial.println(TFT_ROTATION);
 
+    touchIsPressed = false;
+    touchX = 0;
+    touchY = 0;
+
     Serial.println("[TOUCH] touchInit() END");
     Serial.println("[TOUCH] ================================");
 }
-
-// ============================================================
-// LECTURE
-// ============================================================
 
 void touchUpdate()
 {
     if (!touch.touched())
     {
+        if (touchIsPressed)
+        {
+            Serial.println("[TOUCH] RELACHE");
+        }
+
         touchIsPressed = false;
         return;
     }
@@ -75,17 +66,16 @@ void touchUpdate()
 
     touchX = point.x;
     touchY = point.y;
-
     touchIsPressed = true;
 
     Serial.println("[TOUCH] -------------------------------");
     Serial.println("[TOUCH] PRESSION DETECTEE");
 
     Serial.print("[TOUCH] RAW X = ");
-    Serial.println(touchX);
+    Serial.println(point.x);
 
     Serial.print("[TOUCH] RAW Y = ");
-    Serial.println(touchY);
+    Serial.println(point.y);
 
     Serial.print("[TOUCH] RAW Z = ");
     Serial.println(point.z);
@@ -93,27 +83,15 @@ void touchUpdate()
     Serial.println("[TOUCH] -------------------------------");
 }
 
-// ============================================================
-// ETAT
-// ============================================================
-
 bool touchPressed()
 {
     return touchIsPressed;
 }
 
-// ============================================================
-// X
-// ============================================================
-
 uint16_t touchGetX()
 {
     return touchX;
 }
-
-// ============================================================
-// Y
-// ============================================================
 
 uint16_t touchGetY()
 {
