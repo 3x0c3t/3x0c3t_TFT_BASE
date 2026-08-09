@@ -5,6 +5,10 @@
 #include <TFT_eSPI.h>
 #include "config.h"
 
+// ============================================================
+// TFT
+// ============================================================
+
 extern TFT_eSPI tft;
 
 // ============================================================
@@ -17,49 +21,44 @@ void displayInit();
 // INTERFACE
 // ============================================================
 
-void drawInterface(
-    const String& title
-);
-
-// ============================================================
-// HEADER
-// ============================================================
+void drawInterface(const String& title);
 
 void drawHeader();
-
 void drawHeaderTime();
-
 void drawStatusSquares();
 
 void drawProgressBar();
+void setProgress(uint8_t percent);
 
-// ============================================================
-// PROGRESSION
-// ============================================================
-
-void setProgress(
-    uint8_t percent
-);
-
-// ============================================================
-// TITRE
-// ============================================================
-
-void drawTitle(
-    const String& title
-);
-
-// ============================================================
-// CONTENU
-// ============================================================
+void drawTitle(const String& title);
 
 void clearContent();
 
+void drawFooter();
+
 // ============================================================
-// FOOTER
+// ETATS
 // ============================================================
 
-void drawFooter();
+void addStatus(
+    const String& label,
+    uint16_t color
+);
+
+void setStatus(
+    const String& label,
+    uint16_t color
+);
+
+void removeStatus(
+    const String& label
+);
+
+void clearStatus();
+
+// ============================================================
+// OUTILS AFFICHAGE
+// ============================================================
 
 void drawButton(
     int x,
@@ -70,46 +69,10 @@ void drawButton(
     uint16_t color
 );
 
-// ============================================================
-// TEXTE
-// ============================================================
-
 void centerText(
     const String& text,
     int y,
     uint8_t size,
-    uint16_t color
-);
-
-// ============================================================
-// GESTION DES STATUTS
-// ============================================================
-
-// Ajoute un nouveau statut dans le header.
-// Exemple : addStatus("W", COLOR_ERROR);
-
-bool addStatus(
-    const String& label,
-    uint16_t color
-);
-
-// Modifie la couleur d'un statut existant.
-// Exemple : setStatus("W", COLOR_OK);
-
-bool setStatus(
-    const String& label,
-    uint16_t color
-);
-
-// Supprime tous les statuts.
-
-void clearStatus();
-
-// Compatibilité avec l'ancienne API.
-// Exemple : setStatus(0, COLOR_OK);
-
-void setStatus(
-    int index,
     uint16_t color
 );
 
