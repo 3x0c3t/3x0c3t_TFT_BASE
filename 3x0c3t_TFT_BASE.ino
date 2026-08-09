@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "touch.h"
 #include "config.h"
 #include "display.h"
 #include "splash.h"
@@ -25,27 +26,38 @@ void setup()
     delay(100);
 
     Serial.println();
-    Serial.println();
     Serial.println("================================");
     Serial.println("3x0c3t TFT BASE");
     Serial.println("================================");
-
-    Serial.println("[BOOT] setup() START");
 
     // --------------------------------------------------------
     // AFFICHAGE
     // --------------------------------------------------------
 
     Serial.println("[BOOT] displayInit() START");
+
     displayInit();
+
     Serial.println("[BOOT] displayInit() END");
+
+    // --------------------------------------------------------
+    // TACTILE
+    // --------------------------------------------------------
+
+    Serial.println("[BOOT] touchInit() START");
+
+    touchInit();
+
+    Serial.println("[BOOT] touchInit() END");
 
     // --------------------------------------------------------
     // SPLASH
     // --------------------------------------------------------
 
     Serial.println("[BOOT] splashShow() START");
+
     splashShow();
+
     Serial.println("[BOOT] splashShow() END");
 
     // --------------------------------------------------------
@@ -53,35 +65,38 @@ void setup()
     // --------------------------------------------------------
 
     Serial.println("[BOOT] pagesInit() START");
+
     pagesInit();
+
     Serial.println("[BOOT] pagesInit() END");
 
-    Serial.println("[BOOT] pMainInit() START");
+    // --------------------------------------------------------
+    // INITIALISATION DES PAGES
+    // --------------------------------------------------------
+
+    Serial.println("[BOOT] pMainInit()");
     pMainInit();
-    Serial.println("[BOOT] pMainInit() END");
 
-    Serial.println("[BOOT] pMeteoInit() START");
+    Serial.println("[BOOT] pMeteoInit()");
     pMeteoInit();
-    Serial.println("[BOOT] pMeteoInit() END");
 
-    Serial.println("[BOOT] pSettingsInit() START");
+    Serial.println("[BOOT] pSettingsInit()");
     pSettingsInit();
-    Serial.println("[BOOT] pSettingsInit() END");
 
-    Serial.println("[BOOT] pSystemInit() START");
+    Serial.println("[BOOT] pSystemInit()");
     pSystemInit();
-    Serial.println("[BOOT] pSystemInit() END");
 
-    Serial.println("[BOOT] pWifiInit() START");
+    Serial.println("[BOOT] pWifiInit()");
     pWifiInit();
-    Serial.println("[BOOT] pWifiInit() END");
 
     // --------------------------------------------------------
     // SERVICES
     // --------------------------------------------------------
 
     Serial.println("[BOOT] wifiInit() START");
+
     wifiInit();
+
     Serial.println("[BOOT] wifiInit() END");
 
     // --------------------------------------------------------
@@ -89,7 +104,9 @@ void setup()
     // --------------------------------------------------------
 
     Serial.println("[BOOT] pagesShow(PAGE_MAIN) START");
+
     pagesShow(PAGE_MAIN);
+
     Serial.println("[BOOT] pagesShow(PAGE_MAIN) END");
 
     Serial.println("[BOOT] MAIN actif");
@@ -145,10 +162,10 @@ void loop()
     }
 
     // --------------------------------------------------------
-    // HEADER
+    // TACTILE
     // --------------------------------------------------------
 
-    drawHeaderTime();
+    touchUpdate();
 
     // --------------------------------------------------------
     // PAGE
@@ -156,5 +173,15 @@ void loop()
 
     pagesUpdate();
 
-    delay(1000);
+    // --------------------------------------------------------
+    // HORLOGE
+    // --------------------------------------------------------
+
+    drawHeaderTime();
+
+    // --------------------------------------------------------
+    // PETITE PAUSE
+    // --------------------------------------------------------
+
+    delay(50);
 }

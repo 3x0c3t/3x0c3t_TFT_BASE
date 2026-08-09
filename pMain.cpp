@@ -1,6 +1,7 @@
 #include "pMain.h"
 #include "display.h"
 #include "config.h"
+#include "pages.h"
 
 // ============================================================
 // PAGE MAIN
@@ -8,9 +9,7 @@
 
 void pMainInit()
 {
-    Serial.println("[PMAIN] pMainInit() START");
-    Serial.println("[PMAIN] Initialisation MAIN");
-    Serial.println("[PMAIN] pMainInit() END");
+    Serial.println("[PMAIN] pMainInit()");
 }
 
 // ============================================================
@@ -22,61 +21,33 @@ void pMainShow()
     Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] pMainShow() START");
 
-    // --------------------------------------------------------
-    // CONTENU
-    // --------------------------------------------------------
-
-    Serial.println("[PMAIN] clearContent()");
-
     clearContent();
 
-    Serial.println("[PMAIN] clearContent() OK");
-
-    // --------------------------------------------------------
-    // TITRE
-    // --------------------------------------------------------
-
     Serial.println("[PMAIN] drawTitle()");
-
-    drawTitle(HOME_TITLE);
-
-    Serial.println("[PMAIN] drawTitle() OK");
-
-    // --------------------------------------------------------
-    // BOUTON METEO
-    // --------------------------------------------------------
+    drawTitle("-3x0c3t- B04RD");
 
     Serial.println("[PMAIN] drawButton METEO");
 
     drawButton(
-        HOME_BUTTON_X,
-        HOME_BUTTON_METEO_Y,
-        HOME_BUTTON_WIDTH,
-        HOME_BUTTON_HEIGHT,
+        20,
+        CONTENT_Y + 35,
+        200,
+        45,
         "METEO",
-        HOME_BUTTON_BG
+        COLOR_BUTTON_BG
     );
-
-    Serial.println("[PMAIN] bouton METEO OK");
-
-    // --------------------------------------------------------
-    // BOUTON WIFI
-    // --------------------------------------------------------
 
     Serial.println("[PMAIN] drawButton WIFI");
 
     drawButton(
-        HOME_BUTTON_X,
-        HOME_BUTTON_WIFI_Y,
-        HOME_BUTTON_WIDTH,
-        HOME_BUTTON_HEIGHT,
-        "WIFI",
-        HOME_BUTTON_BG
+        20,
+        CONTENT_Y + 100,
+        200,
+        45,
+        "WiFi",
+        COLOR_BUTTON_BG
     );
 
-    Serial.println("[PMAIN] bouton WIFI OK");
-
-    Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] pMainShow() END");
     Serial.println("[PMAIN] ================================");
 }
@@ -87,7 +58,6 @@ void pMainShow()
 
 void pMainUpdate()
 {
-    // Pas de mise à jour dynamique pour le moment.
 }
 
 // ============================================================
@@ -114,9 +84,20 @@ void pMainButtonRight()
     Serial.println("[PMAIN] BUTTON RIGHT");
 }
 
+// ============================================================
+// OK
+// ============================================================
+
 void pMainButtonOk()
 {
+    Serial.println("[PMAIN] ================================");
     Serial.println("[PMAIN] BUTTON OK");
+    Serial.println("[PMAIN] -> ouverture PAGE_METEO");
+
+    pagesSet(PAGE_METEO);
+
+    Serial.println("[PMAIN] PAGE_METEO demandee");
+    Serial.println("[PMAIN] ================================");
 }
 
 void pMainButtonCancel()
