@@ -1,7 +1,7 @@
 #include "pages.h"
 #include "display.h"
-#include "config.h"
 #include "settings.h"
+#include "config.h"
 
 // ============================================================
 // PAGE COURANTE
@@ -15,102 +15,157 @@ static PageID currentPage = PAGE_HOME;
 
 void pagesInit()
 {
-    currentPage = PAGE_HOME;
+currentPage = PAGE_HOME;
 }
 
 // ============================================================
 // NOM DE PAGE
 // ============================================================
 
-static const char* pageTitle(PageID page)
+static const char* pageName(PageID page)
 {
-    switch (page)
-    {
-        case PAGE_HOME:
-            return "ACCUEIL";
+switch (page)
+{
+case PAGE_HOME:
+return "ACCUEIL";
 
-        case PAGE_METEO:
-            return "METEO";
+    case PAGE_METEO:
+        return "METEO";
 
-        case PAGE_SETTINGS:
-            return "REGLAGES";
+    case PAGE_SETTINGS:
+        return "REGLAGES";
 
-        case PAGE_SYSTEM:
-            return "SYSTEME";
+    case PAGE_SYSTEM:
+        return "SYSTEME";
 
-        default:
-            return "INCONNU";
-    }
+    default:
+        return "";
+}
+
 }
 
 // ============================================================
-// AFFICHAGE D'UNE PAGE
+// AFFICHAGE PAGE
 // ============================================================
 
 void pagesShow(PageID page)
 {
-    if (page >= PAGE_COUNT)
-    {
-        page = PAGE_HOME;
-    }
+if (page >= PAGE_COUNT)
+{
+page = PAGE_HOME;
+}
 
-    currentPage = page;
+currentPage = page;
 
-    // --------------------------------------------------------
-    // Interface générale
-    // --------------------------------------------------------
+// --------------------------------------------------------
+// Nettoyage du contenu
+// --------------------------------------------------------
 
-    drawInterface(pageTitle(page));
+tft.fillRect(
+    0,
+    CONTENT_Y,
+    SCREEN_WIDTH,
+    CONTENT_HEIGHT,
+    COLOR_BACKGROUND
+);
 
-    // --------------------------------------------------------
-    // Contenu spécifique
-    // --------------------------------------------------------
+// --------------------------------------------------------
+// ACCUEIL
+// --------------------------------------------------------
 
-    switch (page)
-    {
-        case PAGE_HOME:
+if (page == PAGE_HOME)
+{
+    drawTitle(HOME_TITLE);
 
-            centerText(
-                "ACCUEIL",
-                CONTENT_Y + 50,
-                2,
-                COLOR_TEXT
-            );
+    // ----------------------------------------------------
+    // Bouton METEO
+    // ----------------------------------------------------
 
-            break;
+    drawButton(
+        HOME_BUTTON_X,
+        HOME_BUTTON_METEO_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        "METEO",
+        HOME_BUTTON_BG
+    );
 
-        case PAGE_METEO:
+    // ----------------------------------------------------
+    // Bouton WIFI
+    // ----------------------------------------------------
 
-            centerText(
-                "METEO",
-                CONTENT_Y + 50,
-                2,
-                COLOR_TEXT
-            );
+    drawButton(
+        HOME_BUTTON_X,
+        HOME_BUTTON_WIFI_Y,
+        HOME_BUTTON_WIDTH,
+        HOME_BUTTON_HEIGHT,
+        "WiFi",
+        HOME_BUTTON_BG
+    );
 
-            break;
+    return;
+}
 
-        case PAGE_SETTINGS:
+// --------------------------------------------------------
+// METEO
+// --------------------------------------------------------
 
-            settingsShow();
+if (page == PAGE_METEO)
+{
+    drawTitle("METEO");
 
-            break;
+    tft.setTextFont(2);
+    tft.setTextSize(1);
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(
+        COLOR_TEXT,
+        COLOR_BACKGROUND
+    );
 
-        case PAGE_SYSTEM:
+    tft.drawString(
+        "METEO",
+        SCREEN_WIDTH / 2,
+        CONTENT_Y + 50
+    );
 
-            centerText(
-                "SYSTEME",
-                CONTENT_Y + 50,
-                2,
-                COLOR_TEXT
-            );
+    return;
+}
 
-            break;
+// --------------------------------------------------------
+// SETTINGS
+// --------------------------------------------------------
 
-        default:
+if (page == PAGE_SETTINGS)
+{
+    settingsShow();
+    return;
+}
 
-            break;
-    }
+// --------------------------------------------------------
+// SYSTEME
+// --------------------------------------------------------
+
+if (page == PAGE_SYSTEM)
+{
+    drawTitle("SYSTEME");
+
+    tft.setTextFont(2);
+    tft.setTextSize(1);
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(
+        COLOR_TEXT,
+        COLOR_BACKGROUND
+    );
+
+    tft.drawString(
+        "SYSTEME",
+        SCREEN_WIDTH / 2,
+        CONTENT_Y + 50
+    );
+
+    return;
+}
+
 }
 
 // ============================================================
@@ -119,17 +174,15 @@ void pagesShow(PageID page)
 
 void pagesNext()
 {
-    PageID next =
-        static_cast<PageID>(
-            static_cast<uint8_t>(currentPage) + 1
-        );
+int next = (int)currentPage + 1;
 
-    if (next >= PAGE_COUNT)
-    {
-        next = PAGE_HOME;
-    }
+if (next >= PAGE_COUNT)
+{
+    next = PAGE_HOME;
+}
 
-    pagesShow(next);
+pagesShow((PageID)next);
+
 }
 
 // ============================================================
@@ -138,49 +191,69 @@ void pagesNext()
 
 void pagesPrevious()
 {
-    PageID previous;
+int previous = (int)currentPage - 1;
 
-    if (currentPage == PAGE_HOME)
-    {
-        previous =
-            static_cast<PageID>(
-                PAGE_COUNT - 1
-            );
-    }
-    else
-    {
-        previous =
-            static_cast<PageID>(
-                static_cast<uint8_t>(currentPage) - 1
-            );
-    }
-
-    pagesShow(previous);
+if (previous < 0)
+{
+    previous = PAGE_COUNT - 1;
 }
 
-// ============================================================
-// RETOUR ACCUEIL
-// ============================================================
+pagesShow((PageID)previous);
 
-void pagesGoHome()
-{
-    pagesShow(PAGE_HOME);
-}
-
-// ============================================================
-// OUVRIR REGLAGES
-// ============================================================
-
-void pagesGoSettings()
-{
-    pagesShow(PAGE_SETTINGS);
 }
 
 // ============================================================
 // PAGE COURANTE
 // ============================================================
 
-PageID pagesGetCurrent()
+PageID pagesCurrent()
 {
-    return currentPage;
+return currentPage;
+}
+
+// ============================================================
+// RETOUR ACCUEIL
+// ============================================================
+
+void pagesHome()
+{
+pagesShow(PAGE_HOME);
+}
+
+// ============================================================
+// OUVRIR SETTINGS
+// ============================================================
+
+void pagesSettings()
+{
+pagesShow(PAGE_SETTINGS);
+}
+
+// ============================================================
+// BOUTON MENU
+// ============================================================
+
+void pagesMenu()
+{
+pagesShow(PAGE_SETTINGS);
+}
+
+// ============================================================
+// GESTION BOUTONS ACCUEIL
+// ============================================================
+
+void pagesButtonMeteo()
+{
+pagesShow(PAGE_METEO);
+}
+
+// ============================================================
+// GESTION BOUTON WIFI
+// ============================================================
+
+void pagesButtonWifi()
+{
+// Pour l'instant, on reste sur l'accueil.
+// La page WIFI sera ajoutée ensuite.
+pagesShow(PAGE_HOME);
 }

@@ -1,7 +1,6 @@
 #include "display.h"
 
 #include <time.h>
-
 #include "config.h"
 
 // ============================================================
@@ -195,7 +194,7 @@ void drawStatusSquares()
 
     for (int i = 0; i < 4; i++)
     {
-        const int x =
+        int x =
             startX +
             i * (squareSize + spacing);
 
@@ -364,6 +363,12 @@ void drawFooter()
     // BOUTON MENU
     // --------------------------------------------------------
 
+    const int buttonY =
+        y + 1;
+
+    const int buttonHeight =
+        height - 1;
+
     const int iconSize =
         FOOTER_MENU_ICON_SIZE;
 
@@ -371,10 +376,11 @@ void drawFooter()
         (FOOTER_MENU_WIDTH - iconSize) / 2;
 
     const int iconY =
-        y +
-        (height - iconSize) / 2;
+        buttonY +
+        (buttonHeight - iconSize) / 2;
 
-    // Fond du carré arrondi
+    // Fond du bouton MENU
+
     tft.fillRoundRect(
         iconX,
         iconY,
@@ -384,7 +390,8 @@ void drawFooter()
         COLOR_FOOTER_MENU_BG
     );
 
-    // Contour du carré arrondi
+    // Contour du bouton MENU
+
     tft.drawRoundRect(
         iconX,
         iconY,
@@ -498,17 +505,21 @@ static void drawArrow(
     uint16_t color
 )
 {
-    const int left =
-        centerX - w / 2;
+    int left =
+        centerX -
+        w / 2;
 
-    const int top =
-        centerY - h / 2;
+    int top =
+        centerY -
+        h / 2;
 
-    const int right =
-        centerX + w / 2;
+    int right =
+        centerX +
+        w / 2;
 
-    const int bottom =
-        centerY + h / 2;
+    int bottom =
+        centerY +
+        h / 2;
 
     tft.drawRect(
         left,
@@ -623,7 +634,7 @@ static void drawArrow(
 }
 
 // ============================================================
-// BOUTON GENERIQUE
+// BOUTON
 // ============================================================
 
 void drawButton(
@@ -641,7 +652,7 @@ void drawButton(
     }
 
     // --------------------------------------------------------
-    // DETERMINATION DE LA COULEUR DU CONTOUR
+    // BORDURE
     // --------------------------------------------------------
 
     uint16_t borderColor =
@@ -657,10 +668,6 @@ void drawButton(
         borderColor =
             COLOR_BUTTON_CANCEL_BORDER;
     }
-
-    // --------------------------------------------------------
-    // BORDURE
-    // --------------------------------------------------------
 
     tft.drawRect(
         x,
@@ -706,7 +713,8 @@ void drawButton(
         textColor =
             TFT_BLACK;
     }
-    else if (color == COLOR_BUTTON_CANCEL_BG)
+
+    if (color == COLOR_BUTTON_CANCEL_BG)
     {
         textColor =
             TFT_WHITE;
