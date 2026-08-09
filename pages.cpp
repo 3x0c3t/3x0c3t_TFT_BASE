@@ -1,7 +1,6 @@
 #include "pages.h"
-
-#include "display.h"
 #include "config.h"
+#include "display.h"
 
 #include "pMain.h"
 #include "pMeteo.h"
@@ -9,13 +8,14 @@
 #include "pSystem.h"
 #include "pWifi.h"
 
+#include <Arduino.h>
+#include <TFT_eSPI.h>
 
 // ============================================================
 // PAGE COURANTE
 // ============================================================
 
-static PageID currentPage = PAGE_MAIN;
-
+PageID currentPage = PAGE_MAIN;
 
 // ============================================================
 // INITIALISATION
@@ -26,48 +26,8 @@ void pagesInit()
     currentPage = PAGE_MAIN;
 }
 
-
 // ============================================================
-// PAGE COURANTE
-// ============================================================
-
-PageID pagesCurrent()
-{
-    return currentPage;
-}
-
-
-// ============================================================
-// NOM PAGE
-// ============================================================
-
-const char* pageName(PageID page)
-{
-    switch (page)
-    {
-        case PAGE_MAIN:
-            return "MAIN";
-
-        case PAGE_METEO:
-            return "METEO";
-
-        case PAGE_SETTINGS:
-            return "SETTINGS";
-
-        case PAGE_SYSTEM:
-            return "SYSTEM";
-
-        case PAGE_WIFI:
-            return "WIFI";
-
-        default:
-            return "UNKNOWN";
-    }
-}
-
-
-// ============================================================
-// AFFICHAGE PAGE
+// AFFICHAGE D'UNE PAGE
 // ============================================================
 
 void pagesShow(PageID page)
@@ -79,38 +39,54 @@ void pagesShow(PageID page)
 
     currentPage = page;
 
-    switch (currentPage)
+    // ========================================================
+    // RECONSTRUCTION COMPLETE DE L'INTERFACE
+    //
+    // drawInterface() restaure :
+    // - fond
+    // - première ligne du header
+    // - barre de progression
+    // - deuxième ligne du header
+    // - titre
+    // ========================================================
+
+    switch (page)
     {
         case PAGE_MAIN:
+            drawInterface("MAIN");
             pMainShow();
             break;
 
         case PAGE_METEO:
+            drawInterface("METEO");
             pMeteoShow();
             break;
 
         case PAGE_SETTINGS:
+            drawInterface("SETTINGS");
             pSettingsShow();
             break;
 
         case PAGE_SYSTEM:
+            drawInterface("SYSTEM");
             pSystemShow();
             break;
 
         case PAGE_WIFI:
+            drawInterface("WIFI");
             pWifiShow();
             break;
 
         default:
-            pMainShow();
             currentPage = PAGE_MAIN;
+            drawInterface("MAIN");
+            pMainShow();
             break;
     }
 }
 
-
 // ============================================================
-// UPDATE
+// MISE A JOUR DE LA PAGE COURANTE
 // ============================================================
 
 void pagesUpdate()
@@ -141,91 +117,6 @@ void pagesUpdate()
             break;
     }
 }
-
-
-// ============================================================
-// PAGE SUIVANTE
-// ============================================================
-
-void pagesNext()
-{
-    int next = (int)currentPage + 1;
-
-    if (next >= PAGE_COUNT)
-    {
-        next = PAGE_MAIN;
-    }
-
-    pagesShow((PageID)next);
-}
-
-
-// ============================================================
-// PAGE PRECEDENTE
-// ============================================================
-
-void pagesPrevious()
-{
-    int previous = (int)currentPage - 1;
-
-    if (previous < 0)
-    {
-        previous = PAGE_COUNT - 1;
-    }
-
-    pagesShow((PageID)previous);
-}
-
-
-// ============================================================
-// MAIN
-// ============================================================
-
-void pagesMain()
-{
-    pagesShow(PAGE_MAIN);
-}
-
-
-// ============================================================
-// METEO
-// ============================================================
-
-void pagesMeteo()
-{
-    pagesShow(PAGE_METEO);
-}
-
-
-// ============================================================
-// SETTINGS
-// ============================================================
-
-void pagesSettings()
-{
-    pagesShow(PAGE_SETTINGS);
-}
-
-
-// ============================================================
-// SYSTEM
-// ============================================================
-
-void pagesSystem()
-{
-    pagesShow(PAGE_SYSTEM);
-}
-
-
-// ============================================================
-// WIFI
-// ============================================================
-
-void pagesWifi()
-{
-    pagesShow(PAGE_WIFI);
-}
-
 
 // ============================================================
 // BOUTON UP
@@ -260,7 +151,6 @@ void pagesButtonUp()
     }
 }
 
-
 // ============================================================
 // BOUTON DOWN
 // ============================================================
@@ -293,7 +183,6 @@ void pagesButtonDown()
             break;
     }
 }
-
 
 // ============================================================
 // BOUTON LEFT
@@ -328,7 +217,6 @@ void pagesButtonLeft()
     }
 }
 
-
 // ============================================================
 // BOUTON RIGHT
 // ============================================================
@@ -361,7 +249,6 @@ void pagesButtonRight()
             break;
     }
 }
-
 
 // ============================================================
 // BOUTON OK
@@ -396,7 +283,6 @@ void pagesButtonOk()
     }
 }
 
-
 // ============================================================
 // BOUTON CANCEL
 // ============================================================
@@ -426,7 +312,24 @@ void pagesButtonCancel()
             break;
 
         default:
-            pagesMain();
             break;
     }
+}
+
+// ============================================================
+// PAGE COURANTE
+// ============================================================
+
+PageID pagesGetCurrent()
+{
+    return currentPage;
+}
+
+// ============================================================
+// CHANGEMENT DE PAGE
+// ============================================================
+
+void pagesSet(PageID page)
+{
+    pagesShow(page);
 }
