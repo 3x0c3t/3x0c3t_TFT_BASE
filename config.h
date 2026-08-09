@@ -27,28 +27,41 @@
 #define COLOR_WARNING       TFT_YELLOW
 
 // ============================================================
+// BOUTONS
+// ============================================================
+
+#define COLOR_BUTTON        TFT_DARKGREY
+#define COLOR_BUTTON_TEXT   TFT_WHITE
+
+#define COLOR_BUTTON_UP     TFT_DARKGREY
+#define COLOR_BUTTON_DOWN   TFT_DARKGREY
+#define COLOR_BUTTON_LEFT   TFT_DARKGREY
+#define COLOR_BUTTON_RIGHT  TFT_DARKGREY
+#define COLOR_BUTTON_MENU   TFT_DARKGREY
+
+#define COLOR_BUTTON_CANCEL COLOR_ERROR
+#define COLOR_BUTTON_OK     COLOR_OK
+
+// ============================================================
 // HEADER
 // ============================================================
 
-// Première ligne horizontale
 #define HEADER_LINE_1_Y     10
 
-// Barre de progression
-// EXACTEMENT 1 PIXEL DE HAUTEUR
 #define PROGRESS_Y          19
 #define PROGRESS_HEIGHT     1
 
-// Deuxième ligne horizontale
 #define HEADER_LINE_2_Y     12
 
-// Heure
 #define HEADER_TIME_X       2
 #define HEADER_TIME_Y       0
 
-// Couleurs Header
 #define COLOR_HEADER_TIME   COLOR_TEXT
 #define COLOR_HEADER_STATUS COLOR_LINE
 #define COLOR_HEADER_LINE   COLOR_LINE
+
+// Couleur barre de progression
+#define COLOR_PROGRESS      COLOR_PRIMARY
 
 // ============================================================
 // TITRE
@@ -75,18 +88,27 @@
 #define FOOTER_HEIGHT       30
 #define FOOTER_Y            (SCREEN_HEIGHT - FOOTER_HEIGHT)
 
+// ------------------------------------------------------------
 // Bouton MENU
+// ------------------------------------------------------------
+
 #define FOOTER_MENU_WIDTH   30
 #define FOOTER_MENU_LABEL   "M"
 
+// ------------------------------------------------------------
 // Couleurs footer
+// ------------------------------------------------------------
+
 #define COLOR_FOOTER_BG       COLOR_BACKGROUND
 #define COLOR_FOOTER_LINE     COLOR_LINE
 
 #define COLOR_FOOTER_MENU     COLOR_BUTTON
 #define COLOR_FOOTER_MENU_TEXT COLOR_BUTTON_TEXT
 
+// ------------------------------------------------------------
 // Zone informations
+// ------------------------------------------------------------
+
 #define COLOR_FOOTER_INFO     COLOR_TEXT
 
 // ============================================================
@@ -132,28 +154,33 @@
 
 #define SETTINGS_TITLE               "REGLAGES"
 
-// Couleurs générales
+// ------------------------------------------------------------
+// Couleurs
+// ------------------------------------------------------------
+
 #define SETTINGS_TEXT_COLOR          COLOR_TEXT
 #define SETTINGS_SELECTED_COLOR      COLOR_PRIMARY
 #define SETTINGS_SELECTED_TEXT_COLOR TFT_BLACK
 #define SETTINGS_LINE_COLOR          COLOR_LINE
 
+// ------------------------------------------------------------
 // Position
+// ------------------------------------------------------------
+
 #define SETTINGS_ITEM_X              10
 #define SETTINGS_ITEM_START_Y        55
 #define SETTINGS_ITEM_HEIGHT         30
 
-// Nombre d'éléments visibles
-#define SETTINGS_VISIBLE_ITEMS      6
+#define SETTINGS_VISIBLE_ITEMS       6
 
 // ------------------------------------------------------------
 // Elements du menu
 // ------------------------------------------------------------
 
 #define SETTINGS_ITEM_WIFI           "WIFI"
-#define SETTINGS_ITEM_DISPLAY       "AFFICHAGE"
-#define SETTINGS_ITEM_WEATHER       "METEO"
-#define SETTINGS_ITEM_SYSTEM        "SYSTEME"
+#define SETTINGS_ITEM_DISPLAY        "AFFICHAGE"
+#define SETTINGS_ITEM_WEATHER        "METEO"
+#define SETTINGS_ITEM_SYSTEM         "SYSTEME"
 
 // ============================================================
 // WIFI
@@ -166,9 +193,11 @@
 // METEO
 // ============================================================
 
-#define WEATHER_CITY                "Lille"
-#define WEATHER_COUNTRY             "FR"
+#define WEATHER_CITY                 "Lille"
+#define WEATHER_COUNTRY              "FR"
 
-#define WEATHER_REFRESH_TIME        600000UL
+#define WEATHER_REFRESH_TIME         600000UL
+
+// ============================================================
 
 #endif

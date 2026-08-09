@@ -9,12 +9,12 @@
 
 enum PageID
 {
-PAGE_MAIN = 0,
-PAGE_SETTINGS,
-PAGE_WIFI,
-PAGE_DISPLAY,
-PAGE_WEATHER,
-PAGE_SYSTEM
+    PAGE_HOME = 0,
+    PAGE_METEO,
+    PAGE_SETTINGS,
+    PAGE_SYSTEM,
+
+    PAGE_COUNT
 };
 
 // ============================================================
@@ -24,34 +24,27 @@ PAGE_SYSTEM
 void pagesInit();
 
 // ============================================================
-// PAGE ACTUELLE
-// ============================================================
-
-PageID pagesGetCurrent();
-
-// ============================================================
-// CHANGEMENT DE PAGE
+// AFFICHAGE
 // ============================================================
 
 void pagesShow(PageID page);
 
 // ============================================================
-// MISE A JOUR
+// NAVIGATION
 // ============================================================
 
-void pagesUpdate();
+void pagesNext();
+
+void pagesPrevious();
+
+void pagesGoHome();
+
+void pagesGoSettings();
 
 // ============================================================
-// BOUTONS
+// PAGE COURANTE
 // ============================================================
 
-void pagesButtonUp();
-void pagesButtonDown();
-void pagesButtonLeft();
-void pagesButtonRight();
-
-void pagesButtonMenu();
-void pagesButtonCancel();
-void pagesButtonOk();
+PageID pagesGetCurrent();
 
 #endif

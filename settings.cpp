@@ -20,10 +20,10 @@ static const int SETTINGS_COUNT = 4;
 
 static const char* settingsLabels[SETTINGS_COUNT] =
 {
-SETTINGS_ITEM_WIFI,
-SETTINGS_ITEM_DISPLAY,
-SETTINGS_ITEM_WEATHER,
-SETTINGS_ITEM_SYSTEM
+    SETTINGS_ITEM_WIFI,
+    SETTINGS_ITEM_DISPLAY,
+    SETTINGS_ITEM_WEATHER,
+    SETTINGS_ITEM_SYSTEM
 };
 
 // ============================================================
@@ -32,7 +32,7 @@ SETTINGS_ITEM_SYSTEM
 
 void settingsInit()
 {
-settingsIndex = 0;
+    settingsIndex = 0;
 }
 
 // ============================================================
@@ -41,110 +41,116 @@ settingsIndex = 0;
 
 void settingsShow()
 {
-// --------------------------------------------------------
-// Fond
-// --------------------------------------------------------
+    // --------------------------------------------------------
+    // Nettoyage contenu
+    // --------------------------------------------------------
 
-```
-tft.fillRect(
-    0,
-    CONTENT_Y,
-    SCREEN_WIDTH,
-    CONTENT_HEIGHT,
-    COLOR_BACKGROUND
-);
-
-// --------------------------------------------------------
-// Titre
-// --------------------------------------------------------
-
-drawTitle(
-    SETTINGS_TITLE
-);
-
-// --------------------------------------------------------
-// Liste
-// --------------------------------------------------------
-
-for (int i = 0; i < SETTINGS_COUNT; i++)
-{
-    int y =
-        SETTINGS_ITEM_START_Y +
-        (i * SETTINGS_ITEM_HEIGHT);
-
-    bool selected =
-        (i == settingsIndex);
-
-    // Fond sélection
-    if (selected)
-    {
-        tft.fillRect(
-            SETTINGS_ITEM_X - 4,
-            y - 2,
-            SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
-            SETTINGS_ITEM_HEIGHT - 2,
-            SETTINGS_SELECTED_COLOR
-        );
-    }
-    else
-    {
-        tft.fillRect(
-            SETTINGS_ITEM_X - 4,
-            y - 2,
-            SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
-            SETTINGS_ITEM_HEIGHT - 2,
-            COLOR_BACKGROUND
-        );
-    }
-
-    // Ligne
-    tft.drawFastHLine(
-        SETTINGS_ITEM_X,
-        y + SETTINGS_ITEM_HEIGHT - 4,
-        SCREEN_WIDTH - SETTINGS_ITEM_X * 2,
-        SETTINGS_LINE_COLOR
+    tft.fillRect(
+        0,
+        CONTENT_Y,
+        SCREEN_WIDTH,
+        CONTENT_HEIGHT,
+        COLOR_BACKGROUND
     );
 
-    // Texte
-    tft.setTextFont(1);
-    tft.setTextSize(1);
-    tft.setTextDatum(ML_DATUM);
+    // --------------------------------------------------------
+    // Titre
+    // --------------------------------------------------------
 
-    if (selected)
+    drawTitle(
+        SETTINGS_TITLE
+    );
+
+    // --------------------------------------------------------
+    // Liste
+    // --------------------------------------------------------
+
+    for (int i = 0; i < SETTINGS_COUNT; i++)
     {
-        tft.setTextColor(
-            SETTINGS_SELECTED_TEXT_COLOR,
-            SETTINGS_SELECTED_COLOR
-        );
+        int y =
+            SETTINGS_ITEM_START_Y +
+            (i * SETTINGS_ITEM_HEIGHT);
 
-        tft.drawString(
-            ">",
+        bool selected =
+            (i == settingsIndex);
+
+        // ----------------------------------------------------
+        // Fond
+        // ----------------------------------------------------
+
+        if (selected)
+        {
+            tft.fillRect(
+                SETTINGS_ITEM_X - 4,
+                y - 2,
+                SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
+                SETTINGS_ITEM_HEIGHT - 2,
+                SETTINGS_SELECTED_COLOR
+            );
+        }
+        else
+        {
+            tft.fillRect(
+                SETTINGS_ITEM_X - 4,
+                y - 2,
+                SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
+                SETTINGS_ITEM_HEIGHT - 2,
+                COLOR_BACKGROUND
+            );
+        }
+
+        // ----------------------------------------------------
+        // Ligne
+        // ----------------------------------------------------
+
+        tft.drawFastHLine(
             SETTINGS_ITEM_X,
-            y + SETTINGS_ITEM_HEIGHT / 2 - 2
+            y + SETTINGS_ITEM_HEIGHT - 4,
+            SCREEN_WIDTH - SETTINGS_ITEM_X * 2,
+            SETTINGS_LINE_COLOR
         );
 
-        tft.drawString(
-            settingsLabels[i],
-            SETTINGS_ITEM_X + 12,
-            y + SETTINGS_ITEM_HEIGHT / 2 - 2
-        );
+        // ----------------------------------------------------
+        // Texte
+        // ----------------------------------------------------
+
+        tft.setTextFont(1);
+        tft.setTextSize(1);
+        tft.setTextDatum(ML_DATUM);
+
+        if (selected)
+        {
+            tft.setTextColor(
+                SETTINGS_SELECTED_TEXT_COLOR,
+                SETTINGS_SELECTED_COLOR
+            );
+
+            tft.drawString(
+                ">",
+                SETTINGS_ITEM_X,
+                y + SETTINGS_ITEM_HEIGHT / 2 - 2
+            );
+
+            tft.drawString(
+                settingsLabels[i],
+                SETTINGS_ITEM_X + 12,
+                y + SETTINGS_ITEM_HEIGHT / 2 - 2
+            );
+        }
+        else
+        {
+            tft.setTextColor(
+                SETTINGS_TEXT_COLOR,
+                COLOR_BACKGROUND
+            );
+
+            tft.drawString(
+                settingsLabels[i],
+                SETTINGS_ITEM_X + 12,
+                y + SETTINGS_ITEM_HEIGHT / 2 - 2
+            );
+        }
     }
-    else
-    {
-        tft.setTextColor(
-            SETTINGS_TEXT_COLOR,
-            COLOR_BACKGROUND
-        );
-
-        tft.drawString(
-            settingsLabels[i],
-            SETTINGS_ITEM_X + 12,
-            y + SETTINGS_ITEM_HEIGHT / 2 - 2
-        );
-    }
-}
-```
-
 }
 
 // ============================================================
@@ -153,7 +159,7 @@ for (int i = 0; i < SETTINGS_COUNT; i++)
 
 void settingsUpdate()
 {
-settingsShow();
+    settingsShow();
 }
 
 // ============================================================
@@ -162,18 +168,15 @@ settingsShow();
 
 void settingsButtonUp()
 {
-settingsIndex--;
+    settingsIndex--;
 
-```
-if (settingsIndex < 0)
-{
-    settingsIndex =
-        SETTINGS_COUNT - 1;
-}
+    if (settingsIndex < 0)
+    {
+        settingsIndex =
+            SETTINGS_COUNT - 1;
+    }
 
-settingsShow();
-```
-
+    settingsShow();
 }
 
 // ============================================================
@@ -182,17 +185,14 @@ settingsShow();
 
 void settingsButtonDown()
 {
-settingsIndex++;
+    settingsIndex++;
 
-```
-if (settingsIndex >= SETTINGS_COUNT)
-{
-    settingsIndex = 0;
-}
+    if (settingsIndex >= SETTINGS_COUNT)
+    {
+        settingsIndex = 0;
+    }
 
-settingsShow();
-```
-
+    settingsShow();
 }
 
 // ============================================================
@@ -201,7 +201,7 @@ settingsShow();
 
 void settingsButtonLeft()
 {
-// Réservé aux réglages de valeurs
+    // Réservé aux réglages de valeurs
 }
 
 // ============================================================
@@ -210,7 +210,7 @@ void settingsButtonLeft()
 
 void settingsButtonRight()
 {
-// Réservé aux réglages de valeurs
+    // Réservé aux réglages de valeurs
 }
 
 // ============================================================
@@ -219,7 +219,7 @@ void settingsButtonRight()
 
 void settingsButtonMenu()
 {
-// Retour menu principal
+    // Retour menu principal
 }
 
 // ============================================================
@@ -228,7 +228,7 @@ void settingsButtonMenu()
 
 void settingsButtonCancel()
 {
-// Annulation
+    // Annulation
 }
 
 // ============================================================
@@ -237,25 +237,22 @@ void settingsButtonCancel()
 
 void settingsButtonOk()
 {
-switch (settingsIndex)
-{
-case 0:
-// WIFI
-break;
+    switch (settingsIndex)
+    {
+        case 0:
+            // WIFI
+            break;
 
-```
-    case 1:
-        // AFFICHAGE
-        break;
+        case 1:
+            // AFFICHAGE
+            break;
 
-    case 2:
-        // METEO
-        break;
+        case 2:
+            // METEO
+            break;
 
-    case 3:
-        // SYSTEME
-        break;
-}
-```
-
+        case 3:
+            // SYSTEME
+            break;
+    }
 }

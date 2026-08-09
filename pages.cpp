@@ -1,22 +1,51 @@
 #include "pages.h"
-
 #include "display.h"
-#include "weather.h"
-#include "wifi.h"
 #include "config.h"
+#include "settings.h"
+
+// ============================================================
+// PAGE COURANTE
+// ============================================================
 
 static PageID currentPage = PAGE_HOME;
+
+// ============================================================
+// INITIALISATION
+// ============================================================
 
 void pagesInit()
 {
     currentPage = PAGE_HOME;
-    pagesShow(currentPage);
 }
 
-PageID pagesCurrent()
+// ============================================================
+// NOM DE PAGE
+// ============================================================
+
+static const char* pageTitle(PageID page)
 {
-    return currentPage;
+    switch (page)
+    {
+        case PAGE_HOME:
+            return "ACCUEIL";
+
+        case PAGE_METEO:
+            return "METEO";
+
+        case PAGE_SETTINGS:
+            return "REGLAGES";
+
+        case PAGE_SYSTEM:
+            return "SYSTEME";
+
+        default:
+            return "INCONNU";
+    }
 }
+
+// ============================================================
+// AFFICHAGE D'UNE PAGE
+// ============================================================
 
 void pagesShow(PageID page)
 {
@@ -27,104 +56,131 @@ void pagesShow(PageID page)
 
     currentPage = page;
 
-    drawInterface(
-        page == PAGE_HOME   ? "ACCUEIL" :
-        page == PAGE_METEO  ? "METEO" :
-        page == PAGE_WIFI   ? "WIFI" :
-                              "SYSTEME"
-    );
+    // --------------------------------------------------------
+    // Interface générale
+    // --------------------------------------------------------
 
-    clearContent();
+    drawInterface(pageTitle(page));
 
-    switch (currentPage)
+    // --------------------------------------------------------
+    // Contenu spécifique
+    // --------------------------------------------------------
+
+    switch (page)
     {
         case PAGE_HOME:
 
             centerText(
-                "3x0c3t TFT BASE",
-                100,
-                2,
-                COLOR_PRIMARY
-            );
-
-            centerText(
                 "ACCUEIL",
-                130,
-                1,
+                CONTENT_Y + 50,
+                2,
                 COLOR_TEXT
             );
 
             break;
-
 
         case PAGE_METEO:
 
-            drawWeather(
-                10,
-                CONTENT_Y + 10
-            );
-
-            break;
-
-
-        case PAGE_WIFI:
-
             centerText(
-                "WIFI",
-                CONTENT_Y + 30,
+                "METEO",
+                CONTENT_Y + 50,
                 2,
-                COLOR_PRIMARY
-            );
-
-            break;
-
-
-        case PAGE_SYSTEME:
-
-            centerText(
-                "SYSTEME",
-                CONTENT_Y + 30,
-                2,
-                COLOR_PRIMARY
-            );
-
-            centerText(
-                "ESP8266",
-                CONTENT_Y + 60,
-                1,
                 COLOR_TEXT
             );
 
             break;
+
+        case PAGE_SETTINGS:
+
+            settingsShow();
+
+            break;
+
+        case PAGE_SYSTEM:
+
+            centerText(
+                "SYSTEME",
+                CONTENT_Y + 50,
+                2,
+                COLOR_TEXT
+            );
+
+            break;
+
+        default:
+
+            break;
     }
 }
+
+// ============================================================
+// PAGE SUIVANTE
+// ============================================================
 
 void pagesNext()
 {
-    int next =
-        (int)currentPage + 1;
+    PageID next =
+        static_cast<PageID>(
+            static_cast<uint8_t>(currentPage) + 1
+        );
 
     if (next >= PAGE_COUNT)
     {
-        next = 0;
+        next = PAGE_HOME;
     }
 
-    pagesShow(
-        (PageID)next
-    );
+    pagesShow(next);
 }
+
+// ============================================================
+// PAGE PRECEDENTE
+// ============================================================
 
 void pagesPrevious()
 {
-    int previous =
-        (int)currentPage - 1;
+    PageID previous;
 
-    if (previous < 0)
+    if (currentPage == PAGE_HOME)
     {
-        previous = PAGE_COUNT - 1;
+        previous =
+            static_cast<PageID>(
+                PAGE_COUNT - 1
+            );
+    }
+    else
+    {
+        previous =
+            static_cast<PageID>(
+                static_cast<uint8_t>(currentPage) - 1
+            );
     }
 
-    pagesShow(
-        (PageID)previous
-    );
+    pagesShow(previous);
+}
+
+// ============================================================
+// RETOUR ACCUEIL
+// ============================================================
+
+void pagesGoHome()
+{
+    pagesShow(PAGE_HOME);
+}
+
+// ============================================================
+// OUVRIR REGLAGES
+// ============================================================
+
+void pagesGoSettings()
+{
+    pagesShow(PAGE_SETTINGS);
+}
+
+// ============================================================
+// PAGE COURANTE
+// ============================================================
+
+PageID pagesGetCurrent()
+{
+    return currentPage;
 }
