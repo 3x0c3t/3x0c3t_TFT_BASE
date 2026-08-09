@@ -1,0 +1,32 @@
+# Arduino
+*.elf
+*.hex
+*.bin
+*.eep
+*.map
+
+# Arduino build/cache
+build/
+build-*/
+arduino_build_*/
+arduino_cache_*/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / configuration locale
+config.local.h
+secrets.h
+secrets.cpp
+.env
+.env.*
+
+# Backups
+*.bak
+*.tmp
+*~
