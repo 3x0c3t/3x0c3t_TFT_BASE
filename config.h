@@ -46,70 +46,75 @@
 // HEADER
 // ============================================================
 
-#define HEADER_LINE_1_Y     10
+// Première ligne horizontale
+#define HEADER_LINE_1_Y      10
 
-#define PROGRESS_Y          19
-#define PROGRESS_HEIGHT     1
+// Barre de progression
+// EXACTEMENT 1 PIXEL DE HAUTEUR
+#define PROGRESS_Y           19
+#define PROGRESS_HEIGHT      1
+#define COLOR_PROGRESS       COLOR_PRIMARY
 
-#define HEADER_LINE_2_Y     12
+// Deuxième ligne horizontale
+#define HEADER_LINE_2_Y      12
 
-#define HEADER_TIME_X       2
-#define HEADER_TIME_Y       0
+// Heure
+#define HEADER_TIME_X        2
+#define HEADER_TIME_Y        0
 
-#define COLOR_HEADER_TIME   COLOR_TEXT
-#define COLOR_HEADER_STATUS COLOR_LINE
-#define COLOR_HEADER_LINE   COLOR_LINE
-
-// Couleur barre de progression
-#define COLOR_PROGRESS      COLOR_PRIMARY
+// Couleurs Header
+#define COLOR_HEADER_TIME    COLOR_TEXT
+#define COLOR_HEADER_STATUS  COLOR_LINE
+#define COLOR_HEADER_LINE    COLOR_LINE
 
 // ============================================================
 // TITRE
 // ============================================================
 
-#define TITLE_Y             13
-#define TITLE_HEIGHT        20
-#define TITLE_LINE_Y        30
+#define TITLE_Y              13
+#define TITLE_HEIGHT         20
+#define TITLE_LINE_Y         30
 
-#define COLOR_TITLE_TEXT    COLOR_PRIMARY
-#define COLOR_TITLE_LINE    COLOR_LINE
+#define COLOR_TITLE_TEXT     COLOR_PRIMARY
+#define COLOR_TITLE_LINE     COLOR_LINE
 
 // ============================================================
 // CONTENU
 // ============================================================
 
-#define CONTENT_Y           47
-#define CONTENT_HEIGHT      218
+#define CONTENT_Y            47
+#define CONTENT_HEIGHT       218
 
 // ============================================================
 // FOOTER
 // ============================================================
 
-#define FOOTER_HEIGHT       30
-#define FOOTER_Y            (SCREEN_HEIGHT - FOOTER_HEIGHT)
+#define FOOTER_HEIGHT        30
+#define FOOTER_Y             (SCREEN_HEIGHT - FOOTER_HEIGHT)
 
 // ------------------------------------------------------------
 // Bouton MENU
 // ------------------------------------------------------------
 
-#define FOOTER_MENU_WIDTH   30
-#define FOOTER_MENU_LABEL   "M"
+#define FOOTER_MENU_WIDTH    30
+
+// Carré MENU
+#define FOOTER_MENU_ICON_SIZE    14
+#define FOOTER_MENU_ICON_RADIUS  3
+#define FOOTER_MENU_ICON_LINE    2
 
 // ------------------------------------------------------------
 // Couleurs footer
 // ------------------------------------------------------------
 
-#define COLOR_FOOTER_BG       COLOR_BACKGROUND
-#define COLOR_FOOTER_LINE     COLOR_LINE
+#define COLOR_FOOTER_BG          COLOR_BACKGROUND
+#define COLOR_FOOTER_LINE        COLOR_LINE
 
-#define COLOR_FOOTER_MENU     COLOR_BUTTON
-#define COLOR_FOOTER_MENU_TEXT COLOR_BUTTON_TEXT
+#define COLOR_FOOTER_MENU        COLOR_BUTTON
+#define COLOR_FOOTER_MENU_TEXT   COLOR_BUTTON_TEXT
 
-// ------------------------------------------------------------
 // Zone informations
-// ------------------------------------------------------------
-
-#define COLOR_FOOTER_INFO     COLOR_TEXT
+#define COLOR_FOOTER_INFO        COLOR_TEXT
 
 // ============================================================
 // SPLASH SCREEN
@@ -154,23 +159,18 @@
 
 #define SETTINGS_TITLE               "REGLAGES"
 
-// ------------------------------------------------------------
-// Couleurs
-// ------------------------------------------------------------
-
+// Couleurs générales
 #define SETTINGS_TEXT_COLOR          COLOR_TEXT
 #define SETTINGS_SELECTED_COLOR      COLOR_PRIMARY
 #define SETTINGS_SELECTED_TEXT_COLOR TFT_BLACK
 #define SETTINGS_LINE_COLOR          COLOR_LINE
 
-// ------------------------------------------------------------
 // Position
-// ------------------------------------------------------------
-
 #define SETTINGS_ITEM_X              10
 #define SETTINGS_ITEM_START_Y        55
 #define SETTINGS_ITEM_HEIGHT         30
 
+// Nombre d'éléments visibles
 #define SETTINGS_VISIBLE_ITEMS       6
 
 // ------------------------------------------------------------
@@ -178,9 +178,9 @@
 // ------------------------------------------------------------
 
 #define SETTINGS_ITEM_WIFI           "WIFI"
-#define SETTINGS_ITEM_DISPLAY        "AFFICHAGE"
-#define SETTINGS_ITEM_WEATHER        "METEO"
-#define SETTINGS_ITEM_SYSTEM         "SYSTEME"
+#define SETTINGS_ITEM_DISPLAY       "AFFICHAGE"
+#define SETTINGS_ITEM_WEATHER       "METEO"
+#define SETTINGS_ITEM_SYSTEM        "SYSTEME"
 
 // ============================================================
 // WIFI
@@ -197,7 +197,5 @@
 #define WEATHER_COUNTRY              "FR"
 
 #define WEATHER_REFRESH_TIME         600000UL
-
-// ============================================================
 
 #endif

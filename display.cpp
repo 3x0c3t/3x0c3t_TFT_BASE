@@ -360,18 +360,34 @@ void drawFooter()
         COLOR_FOOTER_LINE
     );
 
-    // --------------------------------------------------------
-    // BOUTON MENU
-    // --------------------------------------------------------
+// --------------------------------------------------------
+// BOUTON MENU
+// --------------------------------------------------------
 
-    drawButton(
-        0,
-        y + 1,
-        FOOTER_MENU_WIDTH,
-        height - 1,
-        FOOTER_MENU_LABEL,
-        COLOR_FOOTER_MENU
-    );
+const int buttonY =
+    y + 1;
+
+const int buttonHeight =
+    height - 1;
+
+const int iconSize =
+    FOOTER_MENU_ICON_SIZE;
+
+const int iconX =
+    (FOOTER_MENU_WIDTH - iconSize) / 2;
+
+const int iconY =
+    buttonY +
+    (buttonHeight - iconSize) / 2;
+
+tft.drawRoundRect(
+    iconX,
+    iconY,
+    iconSize,
+    iconSize,
+    FOOTER_MENU_ICON_RADIUS,
+    COLOR_FOOTER_MENU
+);
 
     // --------------------------------------------------------
     // SEPARATION MENU / INFORMATIONS
