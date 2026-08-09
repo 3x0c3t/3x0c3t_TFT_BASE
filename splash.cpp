@@ -1,55 +1,38 @@
 #include "splash.h"
 
 #include <Arduino.h>
-#include <TFT_eSPI.h>
 
 #include "config.h"
+#include "display.h"
 
 // ============================================================
-// TFT EXTERNE
-// ============================================================
-
-extern TFT_eSPI tft;
-
-
-// ============================================================
-// SPLASH
-// ============================================================
-
-void splashInit()
-{
-    // Rien à initialiser pour le moment.
-}
-
-
-// ============================================================
-// AFFICHAGE SPLASH
+// SPLASH SCREEN
 // ============================================================
 
 void splashShow()
 {
-    unsigned long startTime =
-        millis();
+    unsigned long startTime = millis();
+    unsigned long lastUpdate = 0;
+
+    int progress = 0;
 
     // ========================================================
-    // ECRAN NOIR
+    // FOND
     // ========================================================
 
     tft.fillScreen(
         SPLASH_BACKGROUND
     );
 
-
     // ========================================================
-    // TITRE PRINCIPAL
+    // TITRE
     // ========================================================
 
     tft.setTextFont(2);
-
     tft.setTextSize(1);
 
     tft.setTextDatum(
-        MC_DATUM
+        TC_DATUM
     );
 
     tft.setTextColor(
@@ -63,13 +46,11 @@ void splashShow()
         SPLASH_TITLE_Y
     );
 
-
     // ========================================================
     // SOUS-TITRE
     // ========================================================
 
     tft.setTextFont(1);
-
     tft.setTextSize(1);
 
     tft.setTextColor(
@@ -82,7 +63,6 @@ void splashShow()
         SCREEN_WIDTH / 2,
         SPLASH_SUBTITLE_Y
     );
-
 
     // ========================================================
     // VERSION
@@ -99,102 +79,98 @@ void splashShow()
         SPLASH_VERSION_Y
     );
 
-
     // ========================================================
-    // BARRE DE PROGRESSION
+    // CADRE DE PROGRESSION
     // ========================================================
-
-    const int barX =
-        SPLASH_PROGRESS_X;
-
-    const int barY =
-        SPLASH_PROGRESS_Y;
-
-    const int barWidth =
-        SPLASH_PROGRESS_WIDTH;
-
-    const int barHeight =
-        SPLASH_PROGRESS_HEIGHT;
-
 
     tft.drawRect(
-        barX,
-        barY,
-        barWidth,
-        barHeight,
+        SPLASH_PROGRESS_X - 1,
+        SPLASH_PROGRESS_Y - 1,
+        SPLASH_PROGRESS_WIDTH + 2,
+        SPLASH_PROGRESS_HEIGHT + 2,
         SPLASH_PROGRESS_BORDER
     );
 
-
     // ========================================================
-    // PROGRESSION
+    // ANIMATION
     // ========================================================
 
-    const unsigned long duration =
-        SPLASH_DURATION;
-
-    while (
-        millis() - startTime <
-        duration
-    )
+    while (progress < 100)
     {
+        unsigned long now = millis();
+
         unsigned long elapsed =
-            millis() - startTime;
+            now - startTime;
 
-        int percent =
-            map(
-                elapsed,
-                0,
-                duration,
-                0,
-                100
-            );
-
-        if (percent > 100)
+        if (elapsed >= SPLASH_DURATION)
         {
-            percent = 100;
+            progress = 100;
+        }
+        else
+        {
+            progress =
+                (elapsed * 100UL) /
+                SPLASH_DURATION;
         }
 
-        int fillWidth =
-            map(
-                percent,
-                0,
-                100,
-                0,
-                barWidth - 2
-            );
-
-        if (fillWidth > 0)
-        {
-            tft.fillRect(
-                barX + 1,
-                barY + 1,
-                fillWidth,
-                barHeight - 2,
-                SPLASH_PROGRESS_COLOR
-            );
-        }
-
-        delay(
+        // Mise à jour limitée
+        // pour éviter de redessiner inutilement
+        if (
+            now - lastUpdate >=
             SPLASH_UPDATE_INTERVAL
-        );
+        )
+        {
+            lastUpdate = now;
+
+            int progressWidth =
+                (
+                    SPLASH_PROGRESS_WIDTH *
+                    progress
+                ) / 100;
+
+            // Effacement de la barre
+            tft.fillRect(
+                SPLASH_PROGRESS_X,
+                SPLASH_PROGRESS_Y,
+                SPLASH_PROGRESS_WIDTH,
+                SPLASH_PROGRESS_HEIGHT,
+                SPLASH_BACKGROUND
+            );
+
+            // Progression
+            if (progressWidth > 0)
+            {
+                tft.fillRect(
+                    SPLASH_PROGRESS_X,
+                    SPLASH_PROGRESS_Y,
+                    progressWidth,
+                    SPLASH_PROGRESS_HEIGHT,
+                    SPLASH_PROGRESS_COLOR
+                );
+            }
+        }
+
+        yield();
     }
 
+    // ========================================================
+    // PROGRESSION 100 %
+    // ========================================================
+
+    tft.fillRect(
+        SPLASH_PROGRESS_X,
+        SPLASH_PROGRESS_Y,
+        SPLASH_PROGRESS_WIDTH,
+        SPLASH_PROGRESS_HEIGHT,
+        SPLASH_PROGRESS_COLOR
+    );
+
+    delay(50);
 
     // ========================================================
-    // FIN
+    // FIN DU SPLASH
     // ========================================================
 
-    splashHide();
-}
-
-
-// ============================================================
-// MASQUAGE SPLASH
-// ============================================================
-
-void splashHide()
-{
     tft.fillScreen(
         COLOR_BACKGROUND
     );

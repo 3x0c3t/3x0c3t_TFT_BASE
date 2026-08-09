@@ -150,19 +150,41 @@
 #define SPLASH_VERSION_COLOR       COLOR_TEXT
 #define SPLASH_VERSION_Y           175
 
-// Barre de progression du splash
-#define SPLASH_PROGRESS_X          30
-#define SPLASH_PROGRESS_Y          220
-#define SPLASH_PROGRESS_WIDTH      180
-#define SPLASH_PROGRESS_HEIGHT     4
+// ============================================================
+// SPLASH SCREEN
+// ============================================================
 
-#define SPLASH_PROGRESS_BORDER     COLOR_LINE
-#define SPLASH_PROGRESS_COLOR      COLOR_PRIMARY
+// Durée totale d'affichage du splash en millisecondes
+#define SPLASH_DURATION          3000UL
 
-// Durée totale du splash
-#define SPLASH_DURATION             2000UL
+// Fréquence de mise à jour de la barre
+#define SPLASH_UPDATE_INTERVAL   20UL
 
-// Fréquence de mise à jour
-#define SPLASH_UPDATE_INTERVAL      20UL
+// Fond
+#define SPLASH_BACKGROUND        TFT_BLACK
+
+// Texte principal
+#define SPLASH_TITLE             "3x0c3t"
+#define SPLASH_TITLE_COLOR       TFT_CYAN
+#define SPLASH_TITLE_Y           125
+
+// Sous-titre
+#define SPLASH_SUBTITLE          "TFT BASE"
+#define SPLASH_SUBTITLE_COLOR    TFT_WHITE
+#define SPLASH_SUBTITLE_Y        155
+
+// Version
+#define SPLASH_VERSION           "V1.0"
+#define SPLASH_VERSION_COLOR     TFT_DARKGREY
+#define SPLASH_VERSION_Y         180
+
+// Barre de progression
+#define SPLASH_PROGRESS_X        20
+#define SPLASH_PROGRESS_Y        220
+#define SPLASH_PROGRESS_WIDTH    200
+#define SPLASH_PROGRESS_HEIGHT   1
+
+#define SPLASH_PROGRESS_BORDER   TFT_DARKGREY
+#define SPLASH_PROGRESS_COLOR    TFT_CYAN
 
 #endif
