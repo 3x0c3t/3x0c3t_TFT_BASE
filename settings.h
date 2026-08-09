@@ -13,6 +13,10 @@ void settingsShow();
 
 void settingsUpdate();
 
+// ============================================================
+// NAVIGATION
+// ============================================================
+
 void settingsButtonUp();
 
 void settingsButtonDown();
@@ -26,5 +30,11 @@ void settingsButtonMenu();
 void settingsButtonCancel();
 
 void settingsButtonOk();
+
+// ============================================================
+// ETAT
+// ============================================================
+
+int settingsGetIndex();
 
 #endif

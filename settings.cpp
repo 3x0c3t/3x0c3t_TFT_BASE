@@ -1,4 +1,5 @@
 #include "settings.h"
+
 #include "display.h"
 #include "config.h"
 
@@ -42,16 +43,10 @@ void settingsInit()
 void settingsShow()
 {
     // --------------------------------------------------------
-    // Nettoyage contenu
+    // Nettoyage du contenu
     // --------------------------------------------------------
 
-    tft.fillRect(
-        0,
-        CONTENT_Y,
-        SCREEN_WIDTH,
-        CONTENT_HEIGHT,
-        COLOR_BACKGROUND
-    );
+    clearContent();
 
     // --------------------------------------------------------
     // Titre
@@ -62,17 +57,28 @@ void settingsShow()
     );
 
     // --------------------------------------------------------
-    // Liste
+    // Liste des réglages
     // --------------------------------------------------------
 
     for (int i = 0; i < SETTINGS_COUNT; i++)
     {
-        int y =
+        const int y =
             SETTINGS_ITEM_START_Y +
             (i * SETTINGS_ITEM_HEIGHT);
 
-        bool selected =
+        const bool selected =
             (i == settingsIndex);
+
+        const int x =
+            SETTINGS_ITEM_X - 4;
+
+        const int width =
+            SCREEN_WIDTH -
+            (SETTINGS_ITEM_X * 2) +
+            8;
+
+        const int height =
+            SETTINGS_ITEM_HEIGHT - 2;
 
         // ----------------------------------------------------
         // Fond
@@ -80,35 +86,40 @@ void settingsShow()
 
         if (selected)
         {
-            tft.fillRect(
-                SETTINGS_ITEM_X - 4,
+            tft.fillRoundRect(
+                x,
                 y - 2,
-                SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
-                SETTINGS_ITEM_HEIGHT - 2,
+                width,
+                height,
+                4,
                 SETTINGS_SELECTED_COLOR
             );
         }
         else
         {
             tft.fillRect(
-                SETTINGS_ITEM_X - 4,
+                x,
                 y - 2,
-                SCREEN_WIDTH - SETTINGS_ITEM_X * 2 + 8,
-                SETTINGS_ITEM_HEIGHT - 2,
+                width,
+                height,
                 COLOR_BACKGROUND
             );
         }
 
         // ----------------------------------------------------
-        // Ligne
+        // Ligne de séparation
         // ----------------------------------------------------
 
-        tft.drawFastHLine(
-            SETTINGS_ITEM_X,
-            y + SETTINGS_ITEM_HEIGHT - 4,
-            SCREEN_WIDTH - SETTINGS_ITEM_X * 2,
-            SETTINGS_LINE_COLOR
-        );
+        if (!selected)
+        {
+            tft.drawFastHLine(
+                SETTINGS_ITEM_X,
+                y + SETTINGS_ITEM_HEIGHT - 4,
+                SCREEN_WIDTH -
+                SETTINGS_ITEM_X * 2,
+                SETTINGS_LINE_COLOR
+            );
+        }
 
         // ----------------------------------------------------
         // Texte
@@ -125,15 +136,17 @@ void settingsShow()
                 SETTINGS_SELECTED_COLOR
             );
 
+            // Indicateur de sélection
             tft.drawString(
                 ">",
-                SETTINGS_ITEM_X,
+                SETTINGS_ITEM_X + 2,
                 y + SETTINGS_ITEM_HEIGHT / 2 - 2
             );
 
+            // Libellé
             tft.drawString(
                 settingsLabels[i],
-                SETTINGS_ITEM_X + 12,
+                SETTINGS_ITEM_X + 14,
                 y + SETTINGS_ITEM_HEIGHT / 2 - 2
             );
         }
@@ -146,7 +159,7 @@ void settingsShow()
 
             tft.drawString(
                 settingsLabels[i],
-                SETTINGS_ITEM_X + 12,
+                SETTINGS_ITEM_X + 14,
                 y + SETTINGS_ITEM_HEIGHT / 2 - 2
             );
         }
@@ -201,7 +214,7 @@ void settingsButtonDown()
 
 void settingsButtonLeft()
 {
-    // Réservé aux réglages de valeurs
+    // Réservé aux réglages de valeurs.
 }
 
 // ============================================================
@@ -210,7 +223,7 @@ void settingsButtonLeft()
 
 void settingsButtonRight()
 {
-    // Réservé aux réglages de valeurs
+    // Réservé aux réglages de valeurs.
 }
 
 // ============================================================
@@ -219,7 +232,8 @@ void settingsButtonRight()
 
 void settingsButtonMenu()
 {
-    // Retour menu principal
+    // La navigation vers PAGE_MENU
+    // est gérée par pages.cpp.
 }
 
 // ============================================================
@@ -228,7 +242,7 @@ void settingsButtonMenu()
 
 void settingsButtonCancel()
 {
-    // Annulation
+    // Réservé à la navigation des sous-pages.
 }
 
 // ============================================================
@@ -254,5 +268,17 @@ void settingsButtonOk()
         case 3:
             // SYSTEME
             break;
+
+        default:
+            break;
     }
+}
+
+// ============================================================
+// INDEX ACTUEL
+// ============================================================
+
+int settingsGetIndex()
+{
+    return settingsIndex;
 }
